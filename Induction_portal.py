@@ -1,84 +1,65 @@
 import streamlit as st
 import requests
+import time
 import random
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from io import BytesIO
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# --------------------------------------------------
+# -------------------------------------------------
 # CONFIG
-# --------------------------------------------------
+# -------------------------------------------------
 st.set_page_config(page_title="Medanta Induction Portal", layout="wide")
 
 API_URL = "https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec"
 
-PASS_PERCENT = 80
 TOTAL_ASSESSMENTS = 17
+PASS_PERCENT = 80
+GLOBAL_TIMER_MIN = 60
+QUESTION_TIMER_SEC = 60
 
-ASSESSMENT_ORDER = [
-    "A01","A02","A03","A04","A05","A06","A07","A08","A09",
-    "A10","A11","A12","A13","A14","A15","A16","A17"
-]
+ASSESSMENT_ORDER = [f"A{str(i).zfill(2)}" for i in range(1, 18)]
 
-ASSESSMENT_NAMES = {
-    "A01": "HR Admin Process",
-    "A02": "Second Victim",
-    "A03": "Medication Safety",
-    "A04": "Blood & Blood Product Safety",
-    "A05": "Basic Life Support (BLS)",
-    "A06": "Fire Safety",
-    "A07": "Infection Prevention",
-    "A08": "Quality Training",
-    "A09": "IPSG",
-    "A10": "Radiation Training",
-    "A11": "Facility Management Safety",
-    "A12": "Emergency Codes",
-    "A13": "Cybersecurity Assessment",
-    "A14": "Workplace Violence",
-    "A15": "EMR Training",
-    "A16": "HIS Training",
-    "A17": "Medical Documentation"
-}
-
-# --------------------------------------------------
+# -------------------------------------------------
 # HELPERS
-# --------------------------------------------------
-def call_api(payload):
-    r = requests.post(API_URL, json=payload, timeout=20)
-    return r.json()
+# -------------------------------------------------
+def api(payload):
+    return requests.post(API_URL, json=payload, timeout=20).json()
 
-def reset_assessment_state():
-    st.session_state.current_questions = []
+def init_timer():
+    if "global_end" not in st.session_state:
+        st.session_state.global_end = datetime.now() + timedelta(minutes=GLOBAL_TIMER_MIN)
+
+def global_time_left():
+    return max(0, int((st.session_state.global_end - datetime.now()).total_seconds()))
+
+def reset_question_timer():
+    st.session_state.q_start = time.time()
+
+def question_time_left():
+    return max(0, QUESTION_TIMER_SEC - int(time.time() - st.session_state.q_start))
+
+# -------------------------------------------------
+# SESSION STATE
+# -------------------------------------------------
+if "pid" not in st.session_state:
+    st.session_state.pid = None
+    st.session_state.idx = 0
+    st.session_state.questions = []
     st.session_state.answers = {}
-
-# --------------------------------------------------
-# SESSION STATE INIT
-# --------------------------------------------------
-if "participant_id" not in st.session_state:
-    st.session_state.participant_id = None
-    st.session_state.current_index = 0
     st.session_state.completed = {}
-    st.session_state.current_questions = []
-    st.session_state.answers = {}
-    st.session_state.final_scores = {}
 
-# --------------------------------------------------
-# UI – HEADER
-# --------------------------------------------------
-st.markdown(
-    """
-    <h1 style="color:#c00;">Medanta Hospital Lucknow</h1>
-    <p>Onboarding & Induction Assessment Portal</p>
-    """,
-    unsafe_allow_html=True
-)
+# -------------------------------------------------
+# EMBED UI (VISUAL ONLY)
+# -------------------------------------------------
+with open("ui.html", "r", encoding="utf-8") as f:
+    st.components.v1.html(f.read(), height=900)
 
-# --------------------------------------------------
-# STEP 1: PARTICIPANT REGISTRATION
-# --------------------------------------------------
-if st.session_state.participant_id is None:
-    st.subheader("Participant Details")
+st.divider()
+
+# -------------------------------------------------
+# REGISTRATION
+# -------------------------------------------------
+if st.session_state.pid is None:
+    st.subheader("Participant Registration")
 
     with st.form("register"):
         name = st.text_input("Full Name")
@@ -86,138 +67,105 @@ if st.session_state.participant_id is None:
         dob = st.date_input("Date of Birth")
         qual = st.text_input("Qualification")
         category = st.selectbox("Category", ["Administration", "Nursing", "Clinical", "Paramedical"])
-        sub_dept = st.text_input("Sub-Department")
+        sub = st.text_input("Sub-Department")
 
-        submitted = st.form_submit_button("Generate Induction Kit")
+        if st.form_submit_button("Generate Induction Kit"):
+            res = api({
+                "action": "register_participant",
+                "full_name": name,
+                "mobile": mobile,
+                "dob": str(dob),
+                "qualification": qual,
+                "category": category,
+                "sub_department": sub
+            })
 
-    if submitted:
-        res = call_api({
-            "action": "register_participant",
-            "full_name": name,
-            "mobile": mobile,
-            "dob": str(dob),
-            "qualification": qual,
-            "category": category,
-            "sub_department": sub_dept
-        })
-
-        st.session_state.participant_id = res["participant_id"]
-        st.success("Registration successful. Please start your assessments.")
-        st.rerun()
-
-    st.stop()
-
-# --------------------------------------------------
-# STEP 2: ASSESSMENT ENGINE
-# --------------------------------------------------
-pid = st.session_state.participant_id
-current_idx = st.session_state.current_index
-
-if current_idx < TOTAL_ASSESSMENTS:
-    aid = ASSESSMENT_ORDER[current_idx]
-    st.subheader(f"Assessment {current_idx + 1} of {TOTAL_ASSESSMENTS}")
-    st.markdown(f"### {ASSESSMENT_NAMES[aid]}")
-
-    if not st.session_state.current_questions:
-        data = call_api({
-            "action": "get_questions",
-            "assessment_id": aid
-        })
-        st.session_state.current_questions = data["questions"]
-        reset_assessment_state()
-
-    for q in st.session_state.current_questions:
-        st.markdown(f"**{q['question']}**")
-        opts = {o["key"]: o["val"] for o in q["options"]}
-        choice = st.radio(
-            "",
-            options=list(opts.keys()),
-            format_func=lambda x: f"{x}. {opts[x]}",
-            key=q["question_id"]
-        )
-        st.session_state.answers[q["question_id"]] = choice
-
-    if st.button("Submit Assessment"):
-        payload = {
-            "action": "submit_assessment",
-            "participant_id": pid,
-            "assessment_id": aid,
-            "answers": [
-                {"question_id": k, "selected": v}
-                for k, v in st.session_state.answers.items()
-            ]
-        }
-
-        result = call_api(payload)
-        score = result["score"]
-
-        if not result["passed"]:
-            st.warning(
-                "You did great however your score is below 80%. "
-                "Concentrate hard, clarify your doubts and attempt again."
-            )
-            reset_assessment_state()
-        else:
-            st.success(f"Passed with {score}%")
-            st.session_state.completed[aid] = True
-            st.session_state.final_scores[aid] = score
-            st.session_state.current_index += 1
-            reset_assessment_state()
+            st.session_state.pid = res["participant_id"]
+            init_timer()
             st.rerun()
 
     st.stop()
 
-# --------------------------------------------------
-# STEP 3: FINAL MARKSHEET
-# --------------------------------------------------
-st.success("🎉 All assessments completed!")
+# -------------------------------------------------
+# GLOBAL TIMER DISPLAY
+# -------------------------------------------------
+gt = global_time_left()
+st.warning(f"⏱ Global Time Remaining: {gt//60:02d}:{gt%60:02d}")
 
-avg_score = round(sum(st.session_state.final_scores.values()) / TOTAL_ASSESSMENTS, 2)
+if gt <= 0:
+    st.error("Global assessment time expired. Session closed.")
+    st.stop()
 
-st.markdown(f"### Final Score: **{avg_score}%**")
+# -------------------------------------------------
+# ASSESSMENT ENGINE
+# -------------------------------------------------
+aid = ASSESSMENT_ORDER[st.session_state.idx]
 
-if st.button("Download Final Marksheet"):
-    res = call_api({
-        "action": "generate_marksheet",
-        "participant_id": pid
+st.subheader(f"Assessment {st.session_state.idx + 1} of {TOTAL_ASSESSMENTS}")
+st.markdown(f"### Assessment ID: {aid}")
+
+if not st.session_state.questions:
+    data = api({
+        "action": "get_questions",
+        "assessment_id": aid
+    })
+    st.session_state.questions = data["questions"]
+    st.session_state.answers = {}
+    reset_question_timer()
+
+# -------------------------------------------------
+# QUESTIONS LOOP
+# -------------------------------------------------
+qt = question_time_left()
+st.info(f"⏱ Question Time Remaining: {qt} sec")
+
+if qt <= 0:
+    st.warning("Time up for this question. Moving forward.")
+    reset_question_timer()
+    st.rerun()
+
+for q in st.session_state.questions:
+    st.markdown(f"**{q['question']}**")
+    opts = {o["key"]: o["val"] for o in q["options"]}
+
+    choice = st.radio(
+        "",
+        list(opts.keys()),
+        format_func=lambda x: f"{x}. {opts[x]}",
+        key=q["question_id"]
+    )
+
+    st.session_state.answers[q["question_id"]] = choice
+
+# -------------------------------------------------
+# SUBMIT
+# -------------------------------------------------
+if st.button("Submit Assessment"):
+    result = api({
+        "action": "submit_assessment",
+        "participant_id": st.session_state.pid,
+        "assessment_id": aid,
+        "answers": [
+            {"question_id": k, "selected": v}
+            for k, v in st.session_state.answers.items()
+        ]
     })
 
-    if res["status"] == "blocked":
-        st.error("Download limit reached. Maximum 3 downloads allowed.")
+    if not result["passed"]:
+        st.warning(
+            "You did great however your score is below 80%. "
+            "Concentrate hard, clarify your doubts and attempt again."
+        )
+        st.session_state.questions = []
+        st.rerun()
     else:
-        buffer = BytesIO()
-        c = canvas.Canvas(buffer, pagesize=A4)
-        width, height = A4
+        st.success(f"Passed with {result['score']}%")
+        st.session_state.completed[aid] = result["score"]
+        st.session_state.idx += 1
+        st.session_state.questions = []
 
-        c.setFont("Helvetica-Bold", 16)
-        c.drawString(50, height - 50, "Medanta Hospital Lucknow")
+        if st.session_state.idx >= TOTAL_ASSESSMENTS:
+            st.success("🎉 All assessments completed!")
+            st.stop()
 
-        c.setFont("Helvetica", 12)
-        c.drawString(50, height - 90, f"Participant ID: {pid}")
-        c.drawString(50, height - 110, f"Date: {datetime.now().strftime('%d-%m-%Y')}")
-
-        y = height - 150
-        for aid, score in st.session_state.final_scores.items():
-            c.drawString(50, y, f"{ASSESSMENT_NAMES[aid]} : {score}%")
-            y -= 18
-
-        c.drawString(50, y - 20, f"Overall Score: {avg_score}%")
-
-        c.setFont("Helvetica-Oblique", 9)
-        c.drawString(
-            50, 40,
-            "This is an assessment preview strictly for internal purposes. "
-            "Sharing of this document outside of Medanta Hospital, Lucknow "
-            "for any other purpose is strictly Prohibited."
-        )
-
-        c.showPage()
-        c.save()
-        buffer.seek(0)
-
-        st.download_button(
-            "Download PDF",
-            buffer,
-            file_name="Medanta_Induction_Marksheet.pdf",
-            mime="application/pdf"
-        )
+        st.rerun()
