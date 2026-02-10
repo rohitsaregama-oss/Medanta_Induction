@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-# 1. Configuration & Mapping of All Shared Links
+# 1. Configuration: Assessment & Result Mapping
+MASTER_RESULT_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=2045842379&single=true&output=csv"
 ASSESSMENT_LINKS = {
     "HR_ADMIN_PROCESS": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=0&single=true&output=csv",
     "SECOND_VICTIM": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUI (rest of link...)",
@@ -74,4 +75,5 @@ if test_type in ASSESSMENT_LINKS:
                 if st.button("Try Again"):
                     del st.session_state.start_time
                     st.rerun()
+
 
