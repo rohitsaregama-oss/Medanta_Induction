@@ -9,19 +9,19 @@ st.set_page_config(
 )
 
 # -------------------------------------------------
-# SAFE HEADER (NO EXTERNAL DEPENDENCIES)
+# HEADER
 # -------------------------------------------------
 st.markdown("## MEDANTA HOSPITAL LUCKNOW")
 st.markdown("---")
 
 # -------------------------------------------------
-# READ QUERY PARAM (CORRECT, NON-DEPRECATED)
+# READ QUERY PARAM (CORRECT API)
 # -------------------------------------------------
 params = st.query_params
 assessment_id = params.get("assessment")
 
 # -------------------------------------------------
-# DEBUG OUTPUT (TEMPORARY BUT INTENTIONAL)
+# DEBUG OUTPUT (INTENTIONAL)
 # -------------------------------------------------
 st.write("DEBUG → assessment param:", assessment_id)
 
@@ -40,9 +40,10 @@ st.info(f"Assessment received: {assessment_id}")
 
 st.markdown(
     """
-    This confirms:
-    - The app starts without error  
-    - The URL is correct  
-    - Query parameters are working  
+    ✅ This confirms:
+    - Streamlit app starts correctly  
+    - Correct file is running (`Induction_portal.py`)  
+    - URL parameter is being read  
+    - No deprecated APIs  
     """
 )
