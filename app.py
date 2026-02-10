@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
-import time
 import requests
+import time
 
-# 1. THE BRIDGE LINK (The "Writer" - sends scores to Google Sheets)
+# 1. THE BRIDGE LINK (The "Writer")
 BRIDGE_URL = "https://script.google.com/macros/s/AKfycbxVOThjR83HnI6LzxX2uMsAdGaI5nKnBIuwfVq83zLYYUcF-aOpTGPLdY2F5kLbeWn8/exec"
 
-# 2. ASSESSMENT LINKS (The "Readers" - pulls questions from Google Sheets)
+# 2. ASSESSMENT LINKS (The "Readers")
 ASSESSMENT_LINKS = {
     "HR_ADMIN_PROCESS": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=0&single=true&output=csv",
     "SECOND_VICTIM": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=2088706673&single=true&output=csv",
@@ -26,15 +26,15 @@ ASSESSMENT_LINKS = {
     "Medical_Documentation": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=1507714537&single=true&output=csv"
 }
 
-st.set_page_config(page_title="Medanta Assessment Portal", layout="wide")
+st.set_page_config(page_title="Medanta Induction Portal", layout="wide")
 
-# Get parameters passed from the HTML
+# URL Parameters
 params = st.query_params
-test_key = params.get("test", "Basic_Life_Support")
+test_type = params.get("test", "Basic_Life_Support")
 staff_id = params.get("id", "N/A")
 staff_name = params.get("name", "Staff")
 
-# 2. Timer Logic (10 Minutes)
+# 3. TIMER LOGIC (10 Minutes)
 if 'start_time' not in st.session_state:
     st.session_state.start_time = time.time()
 
@@ -42,52 +42,46 @@ elapsed = time.time() - st.session_state.start_time
 remaining = max(0, 600 - int(elapsed))
 
 if remaining <= 0:
-    st.error("⏰ Time Expired! Please close this window and restart the assessment.")
+    st.error("⏰ Time Expired! Please close this window and restart.")
     st.stop()
 
-# Sidebar Timer Display
+# Sidebar
 mins, secs = divmod(remaining, 60)
-st.sidebar.markdown(f"## ⏳ {mins:02d}:{secs:02d}")
-st.sidebar.write(f"**Staff:** {staff_name} | **ID:** {staff_id}")
+st.sidebar.markdown(f"## ⏳ Time: {mins:02d}:{secs:02d}")
+st.sidebar.write(f"**Staff:** {staff_name}\n**ID:** {staff_id}")
 
-# 3. Quiz Logic: Loading Questions & Options
-if test_key in ASSESSMENT_LINKS:
+# 4. QUIZ LOGIC
+if test_type in ASSESSMENT_LINKS:
     try:
-        df = pd.read_csv(ASSESSMENT_LINKS[test_key])
+        df = pd.read_csv(ASSESSMENT_LINKS[test_type])
         
-        # Prevent 'Division by Zero' error if sheet is empty
-        if df.empty:
-            st.error("Sheet is empty. Please verify the Google Sheet data.")
+        # FIX FOR DIVISION BY ZERO: Check if sheet has questions
+        if df.empty or len(df) == 0:
+            st.warning(f"⚠️ No questions found in the '{test_type}' sheet. Please check your Google Sheet content.")
         else:
             with st.form("quiz_form"):
-                st.title(f"📝 {test_key.replace('_', ' ')}")
+                st.title(f"📝 {test_type.replace('_', ' ')}")
                 responses = {}
-                
                 for i, row in df.iterrows():
                     st.write(f"**Q{i+1}: {row['Question']}**")
-                    # Dynamically collect options A through D
                     options = [str(row[opt]) for opt in ['Option A', 'Option B', 'Option C', 'Option D'] if pd.notna(row[opt])]
-                    responses[i] = st.radio(f"Choose answer", options, key=f"q{i}", index=None)
+                    responses[i] = st.radio(f"Select answer", options, key=f"q{i}", index=None)
                 
-                if st.form_submit_button("Submit Final Answers"):
-                    # Scoring logic
-                    correct = sum(1 for idx, r in df.iterrows() if responses[idx] == str(r['Correct Answer']))
-                    score = round((correct / len(df)) * 100, 2)
-                    
-                    if score >= 80:
-                        st.success(f"🎉 PASSED! Score: {score}%")
-                        # Package data for Master Result Sheet
-                        payload = {
-                            "Staff_Name": staff_name, "Staff_ID": staff_id,
-                            "Assessment": test_key, "Score": f"{score}%", "Status": "Pass"
-                        }
-                        requests.post(BRIDGE_URL, json=payload)
-                        st.balloons()
+                submitted = st.form_submit_button("Submit Assessment")
+                
+                if submitted:
+                    if None in responses.values():
+                        st.warning("⚠️ Please answer all questions.")
                     else:
-                        st.error(f"❌ Score: {score}%. 80% required to pass. Please reattempt.")
+                        correct = sum(1 for idx, r in df.iterrows() if responses[idx] == str(r['Correct Answer']))
+                        score = round((correct / len(df)) * 100, 2)
+                        
+                        if score >= 80:
+                            st.success(f"🎉 PASSED! Score: {score}%")
+                            payload = {"Staff_Name": staff_name, "Staff_ID": staff_id, "Assessment": test_type, "Score": f"{score}%", "Status": "Pass"}
+                            requests.post(BRIDGE_URL, json=payload)
+                            st.balloons()
+                        else:
+                            st.error(f"❌ Score: {score}%. 80% required to pass.")
     except Exception as e:
         st.error(f"Error loading questions: {e}")
-        st.error(f"Error loading assessment: {e}")
-else:
-    st.warning("Assessment module not found. Please contact the administrator.")
-
