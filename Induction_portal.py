@@ -25,7 +25,7 @@ ASSESSMENTS = [
 # ---------------- HEADER ----------------
 col1, col2 = st.columns([1, 6])
 with col1:
-    st.image("MHPL Logo 2.png", width=90)
+    st.image("mhpl_logo.png", width=90)
 
 with col2:
     st.markdown("## MEDANTA HOSPITAL LUCKNOW")
@@ -84,3 +84,4 @@ if submit:
         })
         link = f"https://medanta-assessment-tool.streamlit.app/?{params}"
         st.link_button(a.replace("_", " "), link)
+
