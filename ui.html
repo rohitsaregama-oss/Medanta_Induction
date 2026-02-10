@@ -36,7 +36,8 @@
 <div class="container">
     <div class="header">
         <div class="logo-container">
-            <img src="MHPL_logo.png" alt="Medanta_Logo">
+            <!-- ✅ LOGO FIXED HERE -->
+            <img src="mhpl_logo.png" alt="Medanta Logo">
         </div>
         <div>
             <h1>MEDANTA HOSPITAL LUCKNOW</h1>
@@ -85,7 +86,6 @@
                 <input type="text" id="subDept">
             </div>
 
-            <!-- ✅ ADDED: ASSESSMENT DROPDOWN -->
             <div class="input-group">
                 <label>Select Assessment (Optional)</label>
                 <select id="assessmentSelect">
@@ -137,7 +137,6 @@ const assessments = [
     { name: "Medical_Documentation" }
 ];
 
-// ✅ populate dropdown
 document.addEventListener("DOMContentLoaded", () => {
     const ddl = document.getElementById("assessmentSelect");
     assessments.forEach(a => {
@@ -172,5 +171,3 @@ function generateKit() {
 
 </body>
 </html>
-
-
