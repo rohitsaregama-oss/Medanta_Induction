@@ -107,7 +107,6 @@ input,select{
 
 <div class="header">
     <div class="logo-container">
-        <img src="mhpl_logo.png" alt="Medanta Logo">
     </div>
     <div>
         <h1>MEDANTA HOSPITAL LUCKNOW</h1>
@@ -150,6 +149,7 @@ input,select{
 <input type="text">
 </div>
 
+<!-- ✅ FIXED ASSESSMENT DROPDOWN -->
 <div class="input-group">
 <label>Select Assessment</label>
 <select id="assessment">
@@ -167,7 +167,7 @@ input,select{
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A10">A10 – Radiation Training</option>
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A11">A11 – Facility Management Safety</option>
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A12">A12 – Emergency Codes</option>
-<option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A13">A13 – Cybersecurity Assessment</option>
+<option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A13">A13 – Cybersecurity</option>
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A14">A14 – Workplace Violence</option>
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A15">A15 – EMR Training</option>
 <option value="https://inductionassessment-jwqlbjohdn6g2bccdqlqw.streamlit.app/?assessment=A16">A16 – HIS Training</option>
@@ -190,12 +190,12 @@ input,select{
 
 <script>
 function startAssessment(){
-    const link=document.getElementById("assessment").value;
+    const link = document.getElementById("assessment").value;
     if(!link){
         alert("Please select an assessment");
         return;
     }
-    window.open(link,"_blank");
+    window.open(link, "_blank");
 }
 </script>
 
