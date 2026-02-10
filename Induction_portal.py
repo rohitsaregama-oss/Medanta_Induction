@@ -7,13 +7,13 @@ st.set_page_config(
     layout="wide"
 )
 
-ui_path = Path("ui.html")
+html_path = Path("ui.html")
 
-if not ui_path.exists():
-    st.error("ui.html not found. Please upload ui.html to the repository root.")
+if not html_path.exists():
+    st.error("ui.html file is missing")
 else:
     components.html(
-        ui_path.read_text(encoding="utf-8"),
-        height=1400,
+        html_path.read_text(encoding="utf-8"),
+        height=1600,
         scrolling=True
     )
