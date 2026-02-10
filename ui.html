@@ -192,10 +192,24 @@ input,select{
 <div class="kit-item visible">📅 Induction Schedule & Venue</div>
 <div class="kit-item visible">📖 Medanta Employee Handbook</div>
 
-<div class="input-group" style="margin-top:15px;">
-<label>Select Assessment</label>
-<select id="assessmentDropdown" onchange="showAssessment()">
-<option value="">-- Select Assessment --</option>
+<div class="input-group">
+    <label>Select Assessment</label>
+    <select id="assessmentSelect" onchange="openAssessment(this.value)">
+        <option value="">-- Select Assessment --</option>
+        <option value="https://your-link-here/hr-admin">HR Admin Process</option>
+        <option value="https://your-link-here/second-victim">Second Victim</option>
+        <option value="https://your-link-here/medication-safety">Medication Safety</option>
+        <option value="https://your-link-here/blood-product">Blood & Blood Product</option>
+        <option value="https://your-link-here/bls">Basic Life Support</option>
+        <option value="https://your-link-here/fire-safety">Fire Safety</option>
+        <option value="https://your-link-here/infection-prevention">Infection Prevention</option>
+        <option value="https://your-link-here/quality">Quality Training</option>
+        <option value="https://your-link-here/cybersecurity">Cybersecurity</option>
+        <option value="https://your-link-here/emr">EMR Training</option>
+        <option value="https://your-link-here/his">HIS Training</option>
+    </select>
+</div>
+
 <option>HR ADMIN PROCESS</option>
 <option>SECOND VICTIM</option>
 <option>MEDICATION SAFETY</option>
@@ -242,4 +256,5 @@ box.appendChild(d);
 
 </body>
 </html>
+
 
