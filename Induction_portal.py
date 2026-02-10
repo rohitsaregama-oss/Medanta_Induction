@@ -7,13 +7,17 @@ st.set_page_config(
     layout="wide"
 )
 
-html_path = Path("ui.html")
+# ---- SHOW LOGO SAFELY (NOT IN IFRAME) ----
+st.image("mhpl_logo.png", width=180)
 
-if not html_path.exists():
-    st.error("ui.html file is missing")
+# ---- LOAD YOUR EXISTING UI (UNCHANGED) ----
+ui_file = Path("ui.html")
+
+if not ui_file.exists():
+    st.error("ui.html not found")
 else:
     components.html(
-        html_path.read_text(encoding="utf-8"),
+        ui_file.read_text(encoding="utf-8"),
         height=1600,
         scrolling=True
     )
