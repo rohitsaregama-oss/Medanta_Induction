@@ -3,19 +3,19 @@ import uuid
 import requests
 from datetime import datetime
 
-# ---------------- CONFIG ----------------
 st.set_page_config(
     page_title="Medanta Induction Portal",
     layout="wide"
 )
 
+# ---------------- CONFIG ----------------
 BRIDGE_URL = "https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec"
 
 ASSESSMENTS = [
     ("A01", "HR Admin Process"),
     ("A02", "Second Victim"),
     ("A03", "Medication Safety"),
-    ("A04", "Blood & Blood Product"),
+    ("A04", "Blood & Blood Product Safety"),
     ("A05", "Basic Life Support"),
     ("A06", "Fire Safety"),
     ("A07", "Infection Prevention"),
@@ -31,55 +31,50 @@ ASSESSMENTS = [
     ("A17", "Medical Documentation")
 ]
 
-ASSESSMENT_BASE_URL = st.secrets.get(
-    "assessment_base_url",
-    "https://medanta-assessment-tool-3wjjkaj7zzzzwjwajcvcst.streamlit.app"
-)
+ASSESSMENT_BASE_URL = "https://medanta-assessment-tool-3wjjkaj7zzzzwjwajcvcst.streamlit.app"
 
-# ---------------- LOAD UI ----------------
+# ---------------- LOAD HTML UI ----------------
 with open("ui.html", "r", encoding="utf-8") as f:
     ui_html = f.read()
 
 st.components.v1.html(ui_html, height=950, scrolling=True)
 
-st.markdown("---")
+# ---------------- READ DATA FROM URL ----------------
+params = st.query_params
 
-# ---------------- SINGLE BACKEND CONTROL ----------------
-st.subheader("Finalize Induction")
+if "fullName" in params and "mobile" in params:
 
-full_name = st.text_input("Confirm Full Name")
-mobile = st.text_input("Confirm Mobile Number")
-
-if st.button("Confirm & Generate Assessment Links"):
-
-    if not full_name or not mobile:
-        st.error("Full Name and Mobile Number are required.")
-        st.stop()
+    full_name = params.get("fullName")
+    mobile = params.get("mobile")
+    category = params.get("category", "")
+    sub_dept = params.get("subDept", "")
 
     participant_id = f"MDT-{uuid.uuid4().hex[:8].upper()}"
-    induction_date = datetime.now().strftime("%Y-%m-%d")
 
-    # Save participant master
+    # Save to Google Sheet
     payload = {
         "action": "register_participant",
         "participant_id": participant_id,
         "full_name": full_name,
         "mobile": mobile,
-        "induction_date": induction_date
+        "category": category,
+        "sub_department": sub_dept,
+        "timestamp": datetime.now().isoformat()
     }
 
     try:
         requests.post(BRIDGE_URL, json=payload, timeout=10)
-    except Exception as e:
-        st.error("Unable to save participant data.")
+    except:
+        st.error("Failed to save participant data.")
         st.stop()
 
-    st.success(f"Participant Registered: {participant_id}")
+    st.markdown("---")
+    st.success(f"Participant ID: {participant_id}")
 
-    st.markdown("### Your Assessments")
+    st.markdown("### Assigned Assessments")
 
-    for aid, aname in ASSESSMENTS:
-        assessment_link = (
+    for aid, name in ASSESSMENTS:
+        link = (
             f"{ASSESSMENT_BASE_URL}"
             f"?pid={participant_id}"
             f"&aid={aid}"
@@ -88,8 +83,4 @@ if st.button("Confirm & Generate Assessment Links"):
             f"&admin=0"
         )
 
-        st.markdown(
-            f"🔗 **{aname}**  \n"
-            f"[Start Assessment]({assessment_link})",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"🔗 **{name}**  \n[Start Assessment]({link})")
