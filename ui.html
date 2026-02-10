@@ -1,167 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Medanta Induction Portal</title>
-    <style>
-        :root { --medanta-red: #c00; --bg: #f4f7f6; --glass: rgba(255, 255, 255, 0.95); }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #e9ecef; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: auto; background: var(--glass); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; border-top: 10px solid var(--medanta-red); }
-        
-        /* Header Layout */
-        .header { background: linear-gradient(135deg, #c00, #800); color: white; padding: 20px 40px; display: flex; align-items: center; justify-content: flex-start; gap: 25px; }
-        .logo-container img { height: 70px; width: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); border-radius: 4px; }
-        .header-text { text-align: left; }
-        .header h1 { margin: 0; font-size: 26px; letter-spacing: 0.5px; }
-        .header p { margin: 2px 0 0; font-size: 14px; opacity: 0.9; font-weight: 300; }
+<meta charset="UTF-8">
+<title>Medanta Induction Portal</title>
 
-        .content { padding: 30px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; }
-        .form-section, .kit-preview { background: white; padding: 25px; border-radius: 15px; border: 1px solid #eee; }
-        h3 { color: var(--medanta-red); border-bottom: 2px solid #f8d7da; padding-bottom: 10px; margin-top: 0; font-size: 18px; }
-        
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .input-group { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #666; text-transform: uppercase; }
-        input, select { width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; box-sizing: border-box; }
-        input:focus { border-color: var(--medanta-red); outline: none; background: #fffdfd; }
-        
-        .reg-field { display: none; background: #fff5f5; padding: 10px; border-radius: 8px; border: 1px dashed var(--medanta-red); grid-column: span 2; margin-top: 5px; }
-        .btn { background: var(--medanta-red); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; box-shadow: 0 4px 10px rgba(192, 0, 0, 0.2); }
-        .btn:hover { background: #a00; transform: translateY(-2px); }
-        
-        .kit-item { padding: 10px 15px; margin-bottom: 8px; background: #fdf2f2; border-left: 5px solid var(--medanta-red); font-size: 13px; border-radius: 6px; display: none; font-weight: 500; }
-        .specialty { background: #fffbeb; border-left-color: #f59e0b; }
-        .visible { display: block; animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-    </style>
+<style>
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    background: #b30000;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header img {
+    height: 60px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.section {
+    padding: 30px;
+}
+
+label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-top: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+button {
+    margin-top: 25px;
+    background: #b30000;
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #8f0000;
+}
+
+.result {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff5f5;
+    border-left: 5px solid #b30000;
+    display: none;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
+
     <div class="header">
-        <div class="logo-container">
-            <img src="MHPL_logo.png" alt="Medanta Logo" onerror="this.style.display='none'">
-        </div>
-        <div class="header-text">
-            <h1>MEDANTA HOSPITAL LUCKNOW</h1>
-            <p>Onboarding & Induction Dashboard</p>
-        </div>
+        <img src="mhpl_logo.png" alt="Medanta Logo">
+        <h1>Medanta Hospital Lucknow<br><small>Induction & Assessment Portal</small></h1>
     </div>
 
-    <div class="content">
-        <div class="form-section">
-            <h3>Demographic Details</h3>
-            <div class="input-group">
-                <label>Full Name (As per Records)</label>
-                <input type="text" id="fullName" placeholder="Enter Full Name">
-            </div>
-            
-            <div class="input-grid">
-                <div class="input-group">
-                    <label>Contact Number</label>
-                    <input type="text" id="contact" placeholder="10-digit mobile">
-                </div>
-                <div class="input-group">
-                    <label>Date of Birth</label>
-                    <input type="date" id="dob">
-                </div>
-            </div>
+    <div class="section">
 
-            <div class="input-grid">
-                <div class="input-group">
-                    <label>Qualification</label>
-                    <input type="text" id="qual" placeholder="Highest Degree">
-                </div>
-                <div class="input-group">
-                    <label>Category</label>
-                    <select id="category" onchange="toggleRegField()">
-                        <option value="admin">Administration</option>
-                        <option value="nursing">Nursing</option>
-                        <option value="clinical">Doctor / Consultant</option>
-                        <option value="paramedical">Paramedical</option>
-                    </select>
-                </div>
-            </div>
+        <label>Full Name</label>
+        <input type="text" id="name">
 
-            <div class="input-group">
-                <label>Sub-Department</label>
-                <input type="text" id="subDept" placeholder="e.g. ICU, Radiology, Finance">
-            </div>
+        <label>Mobile Number</label>
+        <input type="text" id="mobile">
 
-            <div id="regField" class="reg-field">
-                <label style="color:var(--medanta-red)">Registration Number (Council/INC)</label>
-                <input type="text" id="regNo" placeholder="Enter License/Registration No.">
-            </div>
+        <label>Qualification</label>
+        <input type="text" id="qualification">
 
-            <button class="btn" onclick="generateKit()">GENERATE INDUCTION KIT</button>
-        </div>
+        <label>Category</label>
+        <select id="category">
+            <option>Administration</option>
+            <option>Nursing</option>
+            <option>Clinical</option>
+            <option>Paramedical</option>
+        </select>
 
-        <div class="kit-preview">
-            <h3>Personalized Induction Kit</h3>
-            <div id="common-docs">
-                <div class="kit-item common visible">📅 Induction Schedule & Venue</div>
-                <div class="kit-item common visible">📖 Medanta Employee Handbook</div>
-            </div>
-            <div id="dynamic-list">
-                </div>
-        </div>
+        <label>Select Assessment</label>
+        <select id="assessment">
+            <option value="">-- Select Assessment --</option>
+            <option>HR Admin Process</option>
+            <option>Second Victim</option>
+            <option>Medication Safety</option>
+            <option>Blood & Blood Product Safety</option>
+            <option>Basic Life Support</option>
+            <option>Fire Safety</option>
+            <option>Infection Prevention</option>
+            <option>Quality Training</option>
+            <option>IPSG</option>
+            <option>Radiation Safety</option>
+            <option>Facility Management Safety</option>
+            <option>Emergency Codes</option>
+            <option>Cybersecurity Assessment</option>
+            <option>Workplace Violence</option>
+            <option>EMR Training</option>
+            <option>HIS Training</option>
+            <option>Medical Documentation</option>
+        </select>
+
+        <button onclick="startAssessment()">Start Assessment</button>
+
+        <div class="result" id="resultBox"></div>
+
     </div>
 </div>
 
 <script>
-    function toggleRegField() {
-        const cat = document.getElementById('category').value;
-        const regField = document.getElementById('regField');
-        regField.style.display = (cat === 'nursing' || cat === 'clinical') ? 'block' : 'none';
+function startAssessment() {
+    const name = document.getElementById("name").value;
+    const assessment = document.getElementById("assessment").value;
+    const box = document.getElementById("resultBox");
+
+    if (!name || !assessment) {
+        alert("Please enter name and select an assessment.");
+        return;
     }
 
-    const assessments = [
-    { name: "HR_ADMIN_PROCESS", rule: "all" },
-    { name: "SECOND_VICTIM", rule: "all" },
-    { name: "Medication_Safety", rule: "all" },
-    { name: "Blood_Blood_Product", rule: "all" },
-    { name: "Basic_Life_Support", rule: "all" },
-    { name: "Fire_Safety", rule: "all" },
-    { name: "Infection_Prevention", rule: "all" },
-    { name: "Quality_Training", rule: "all" },
-    { name: "IPSG", rule: "all" },
-    { name: "Radiation_Training", rule: "all" },
-    { name: "Facility_Mgmt_Safety", rule: "all" },
-    { name: "Emergency_Codes", rule: "all" },
-    { name: "Cybersecurity_Assessment", rule: "all" },
-    { name: "Workplace_Violence", rule: "all" },
-    { name: "EMR_Training", rule: "all" },
-    { name: "HIS_Training", rule: "all" },
-    { name: "Medical_Documentation", rule: "all" }
-    ];
-
-    function generateKit() {
-        const cat = document.getElementById('category').value;
-        const sub = document.getElementById('subDept').value || "General";
-        const list = document.getElementById('dynamic-list');
-        list.innerHTML = "";
-
-        assessments.forEach(item => {
-            let show = false;
-            if (item.rule === "all") show = true;
-            if (item.rule === "doctor_only" && cat === "clinical") show = true;
-            if (item.rule === "not_admin" && cat !== "admin") show = true;
-
-            if (show) {
-                const div = document.createElement('div');
-                div.className = "kit-item visible";
-                div.innerText = "✍️ " + item.name;
-                list.appendChild(div);
-            }
-        });
-
-        const subDiv = document.createElement('div');
-        subDiv.className = "kit-item specialty visible";
-        subDiv.innerText = "🏢 Specialty Induction: " + sub;
-        list.appendChild(subDiv);
-    }
+    box.style.display = "block";
+    box.innerHTML = `
+        <strong>Assessment Selected:</strong> ${assessment}<br><br>
+        ${name}, your assessment session will begin here.<br>
+        (Assessment engine integration comes next.)
+    `;
+}
 </script>
 
 </body>
-
 </html>
