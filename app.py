@@ -22,46 +22,56 @@ ASSESSMENT_LINKS = {
     "Medical_Documentation": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUI (rest of link...)"
 }
 
-# 2. Setup the App
 st.set_page_config(page_title="Medanta_Induction Assessment")
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# Get URL parameters from your HTML frontend
+# Get parameters from HTML
 params = st.query_params
 test_type = params.get("test", "Basic_Life_Support")
-staff_name = params.get("name", "New Staff")
-staff_id = params.get("id", "0000")
+staff_id = params.get("id", "N/A")
+staff_name = params.get("name", "Staff")
 
-st.title(f"Medanta {test_type.replace('_', ' ')} Assessment")
+# 2. Timer Logic (10 Minutes / 600 Seconds)
+if 'start_time' not in st.session_state:
+    st.session_state.start_time = time.time()
 
-# 3. Dynamic Question Logic
+elapsed = time.time() - st.session_state.start_time
+remaining = max(0, 600 - int(elapsed))
+
+if remaining <= 0:
+    st.error("Time Up! You must reattempt the assessment.")
+    if st.button("Restart"):
+        del st.session_state.start_time
+        st.rerun()
+else:
+    mins, secs = divmod(remaining, 60)
+    st.sidebar.header(f"Time: {mins:02d}:{secs:02d}")
+
+# 3. Assessment Quiz
 if test_type in ASSESSMENT_LINKS:
-    try:
-        df = pd.read_csv(ASSESSMENT_LINKS[test_type])
+    df = pd.read_csv(ASSESSMENT_LINKS[test_type])
+    
+    with st.form("quiz_form"):
+        st.title(f"{test_type.replace('_', ' ')}")
+        responses = {}
+        for i, row in df.iterrows():
+            st.write(f"**Q{i+1}: {row['Question']}**")
+            options = [row['Option A'], row['Option B'], row['Option C'], row['Option D']]
+            responses[i] = st.radio(f"Choose answer", options, key=f"q{i}")
         
-        with st.form("assessment_form"):
-            responses = {}
-            for i, row in df.iterrows():
-                st.write(f"**Q{i+1}: {row['Question']}**")
-                options = [row['Option A'], row['Option B'], row['Option C'], row['Option D']]
-                responses[i] = st.radio(f"Select answer for Q{i+1}", options, key=f"q{i}")
+        if st.form_submit_button("Submit Assessment"):
+            correct = sum(1 for idx, r in df.iterrows() if responses[idx] == r['Correct Answer'])
+            score = (correct / len(df)) * 100
             
-            if st.form_submit_button("Submit Assessment"):
-                # Score calculation
-                correct = sum(1 for idx, r in df.iterrows() if responses[idx] == r['Correct Answer'])
-                score_pct = (correct / len(df)) * 100
-                
-                # Flow data to Google Sheet result tab
-                result = {
-                    "Timestamp": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M"),
-                    "Staff_Name": staff_name,
-                    "Staff_ID": staff_id,
-                    "Score": f"{score_pct}%",
-                    "Status": "Passed" if score_pct >= 80 else "Failed"
-                }
-                conn.update(worksheet=test_type, data=pd.DataFrame([result]))
-                
-                st.success(f"Submitted! Score: {score_pct}%")
+            # 4. Pass/Fail Logic (80% Threshold)
+            if score >= 80:
+                st.success(f"Passed! Score: {score}%")
+                res = {"Timestamp": pd.Timestamp.now(), "Staff_ID": staff_id, "Score": f"{score}%", "Status": "Pass"}
+                conn.update(worksheet=test_type, data=pd.DataFrame([res]))
                 st.balloons()
-    except Exception as e:
-        st.error("Error loading assessment. Please check your network connection.")
+            else:
+                st.error(f"Failed (Score: {score}%). 80% required to pass. Please reattempt.")
+                if st.button("Try Again"):
+                    del st.session_state.start_time
+                    st.rerun()
+
