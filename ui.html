@@ -192,51 +192,92 @@ input,select{
 <div class="kit-item visible">📅 Induction Schedule & Venue</div>
 <div class="kit-item visible">📖 Medanta Employee Handbook</div>
 
-<div class="input-group">
+<div class="input-group" style="margin-top:15px;">
     <label>Select Assessment</label>
-    <select id="assessmentSelect" onchange="openAssessment(this.value)">
+    <select id="assessmentDropdown" onchange="openAssessment()">
         <option value="">-- Select Assessment --</option>
-        <option value="https://your-link-here/hr-admin">HR Admin Process</option>
-        <option value="https://your-link-here/second-victim">Second Victim</option>
-        <option value="https://your-link-here/medication-safety">Medication Safety</option>
-        <option value="https://your-link-here/blood-product">Blood & Blood Product</option>
-        <option value="https://your-link-here/bls">Basic Life Support</option>
-        <option value="https://your-link-here/fire-safety">Fire Safety</option>
-        <option value="https://your-link-here/infection-prevention">Infection Prevention</option>
-        <option value="https://your-link-here/quality">Quality Training</option>
-        <option value="https://your-link-here/cybersecurity">Cybersecurity</option>
-        <option value="https://your-link-here/emr">EMR Training</option>
-        <option value="https://your-link-here/his">HIS Training</option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=HR_ADMIN_PROCESS">
+            HR Admin Process
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=SECOND_VICTIM">
+            Second Victim
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Medication_Safety">
+            Medication Safety
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Blood_Blood_Product">
+            Blood & Blood Product Safety
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Basic_Life_Support">
+            Basic Life Support
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Fire_Safety">
+            Fire Safety
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Infection_Prevention">
+            Infection Prevention
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Quality_Training">
+            Quality Training
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=IPSG">
+            IPSG
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Radiation_Training">
+            Radiation Training
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Facility_Mgmt_Safety">
+            Facility Management Safety
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Emergency_Codes">
+            Emergency Codes
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Cybersecurity_Assessment">
+            Cybersecurity Assessment
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Workplace_Violence">
+            Workplace Violence
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=EMR_Training">
+            EMR Training
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=HIS_Training">
+            HIS Training
+        </option>
+
+        <option value="https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec?assessment=Medical_Documentation">
+            Medical Documentation
+        </option>
+
     </select>
 </div>
 
-<option>HR ADMIN PROCESS</option>
-<option>SECOND VICTIM</option>
-<option>MEDICATION SAFETY</option>
-<option>BLOOD & BLOOD PRODUCT</option>
-<option>BASIC LIFE SUPPORT</option>
-<option>FIRE SAFETY</option>
-<option>INFECTION PREVENTION</option>
-<option>QUALITY TRAINING</option>
-<option>IPSG</option>
-<option>RADIATION TRAINING</option>
-<option>FACILITY MANAGEMENT SAFETY</option>
-<option>EMERGENCY CODES</option>
-<option>CYBERSECURITY ASSESSMENT</option>
-<option>WORKPLACE VIOLENCE</option>
-<option>EMR TRAINING</option>
-<option>HIS TRAINING</option>
-<option>MEDICAL DOCUMENTATION</option>
-</select>
-</div>
-
-<div id="assessmentBox"></div>
-
-</div>
-</div>
-</div>
-
 <script>
+function openAssessment() {
+    const ddl = document.getElementById("assessmentDropdown");
+    const url = ddl.value;
+    if (!url) return;
+    window.open(url, "_blank");
+    ddl.selectedIndex = 0;
+}
+</script>
+
 function toggleRegField(val){
 document.getElementById("regField").style.display =
 (val==="nursing"||val==="clinical")?"block":"none";
@@ -256,5 +297,6 @@ box.appendChild(d);
 
 </body>
 </html>
+
 
 
