@@ -2,107 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medanta Induction Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .hidden { display: none !important; }
-        body { background: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%); }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="min-h-screen font-sans text-slate-700">
+<body class="bg-slate-50 min-h-screen">
 
-    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-md border border-teal-100 text-center">
-            <img src="MHPL_logo.png" alt="Medanta" class="h-16 mx-auto mb-6">
-            <h2 class="text-3xl font-bold text-slate-800 mb-2">Namaste, <span class="text-teal-600">Welcome</span></h2>
-            <p class="text-slate-500 mb-8 text-sm">Medanta Lucknow Induction Portal</p>
+    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-teal-50">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border border-teal-100">
+            <h2 class="text-3xl font-bold mb-6 text-slate-800">Namaste, <span class="text-teal-600">Welcome</span></h2>
             <form id="login-form" class="space-y-4">
-                <input type="text" id="user-name" placeholder="Full Name" required class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 ring-teal-500">
-                <input type="text" id="employee-id" placeholder="Employee ID" required class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 ring-teal-500">
-                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">Begin Journey <i class="fas fa-arrow-right ml-2"></i></button>
+                <input type="text" id="user-name" placeholder="Full Name" required class="w-full p-4 rounded-2xl border border-slate-200 outline-none focus:ring-2 ring-teal-500">
+                <input type="text" id="employee-id" placeholder="Employee ID" required class="w-full p-4 rounded-2xl border border-slate-200 outline-none focus:ring-2 ring-teal-500">
+                <button type="submit" class="w-full bg-teal-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">Begin Journey <i class="fas fa-arrow-right ml-2"></i></button>
             </form>
         </div>
     </div>
 
     <div id="main-app" class="hidden flex min-h-screen">
-        <aside class="w-64 bg-white border-r border-slate-200 p-6 flex flex-col fixed h-full">
-            <div class="text-2xl font-bold text-teal-700 mb-10">MEDANTA</div>
-            <nav class="space-y-2 flex-1">
-                <button onclick="showPage('dashboard')" class="w-full text-left p-4 rounded-2xl hover:bg-teal-50 text-slate-600 font-medium transition-colors"><i class="fas fa-th-large mr-3"></i>Dashboard</button>
-                <button onclick="showPage('assessment')" class="w-full text-left p-4 rounded-2xl hover:bg-teal-50 text-slate-600 font-medium transition-colors"><i class="fas fa-clipboard-check mr-3"></i>Assessments</button>
-            </nav>
+        <aside class="w-64 bg-white border-r border-slate-200 p-6 space-y-4 fixed h-full">
+            <h1 class="text-xl font-bold text-teal-700 mb-10">MEDANTA</h1>
+            <button onclick="showPage('dashboard')" class="w-full text-left p-4 rounded-xl hover:bg-teal-50 text-slate-600 font-medium"><i class="fas fa-home mr-3"></i>Dashboard</button>
+            <button onclick="showPage('assessment')" class="w-full text-left p-4 rounded-xl hover:bg-teal-50 text-slate-600 font-medium"><i class="fas fa-clipboard-check mr-3"></i>Assessments</button>
         </aside>
 
         <main class="flex-1 ml-64 p-10">
-            <section id="page-dashboard" class="animate-fade-in">
-                <div class="bg-teal-600 p-12 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden mb-10">
-                    <h1 class="text-4xl font-bold mb-2">Welcome, <span id="display-name" class="text-amber-300">Staff</span></h1>
-                    <p class="text-teal-100">Your journey towards clinical excellence starts here.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-6">
-                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-center">
-                        <div class="text-teal-600 text-4xl font-bold mb-2">0/17</div>
-                        <div class="text-slate-500 text-sm font-medium">Modules Completed</div>
-                    </div>
+            <section id="page-dashboard">
+                <div class="bg-teal-600 p-12 rounded-[2.5rem] text-white shadow-xl mb-10">
+                    <h2 class="text-3xl font-bold">Welcome, <span id="display-name">Staff</span></h2>
+                    <p class="opacity-80 mt-2">Medanta Induction & Competency Portal</p>
                 </div>
             </section>
 
             <section id="page-assessment" class="hidden">
-                <h2 class="text-2xl font-bold text-slate-800 mb-8">Available Assessments</h2>
-                <div id="assessment-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-8">Available Modules</h2>
+                <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </section>
         </main>
     </div>
 
     <script>
-        // Use your live Streamlit URL here
         const BACKEND_URL = "https://medantainduction-md9gqsuzmc4pzcywrwbuyh.streamlit.app/";
-        let userData = { name: "", id: "" };
+        let user = { name: "", id: "" };
 
-        // 1. BEGIN JOURNEY LOGIC
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            userData.name = document.getElementById('user-name').value;
-            userData.id = document.getElementById('employee-id').value;
-            
-            document.getElementById('display-name').textContent = userData.name.split(' ')[0];
+            user.name = document.getElementById('user-name').value;
+            user.id = document.getElementById('employee-id').value;
+            document.getElementById('display-name').textContent = user.name.split(' ')[0];
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            renderCards();
+            renderModules();
         });
 
-        // 2. PAGE NAVIGATION
-        function showPage(id) {
+        function showPage(p) {
             document.getElementById('page-dashboard').classList.add('hidden');
             document.getElementById('page-assessment').classList.add('hidden');
-            document.getElementById('page-' + id).classList.remove('hidden');
+            document.getElementById('page-' + p).classList.remove('hidden');
         }
 
-        // 3. RENDER ASSESSMENT CARDS
-        function renderCards() {
-            const list = [
-                { name: "Basic Life Support", key: "Basic_Life_Support", icon: "heartbeat", color: "teal" },
-                { name: "Fire Safety", key: "Fire_Safety", icon: "fire", color: "red" },
-                { name: "Infection Control", key: "Infection_Prevention", icon: "shield-virus", color: "blue" }
+        function renderModules() {
+            const modules = [
+                { name: "Basic Life Support", key: "Basic_Life_Support", icon: "heartbeat" },
+                { name: "Fire Safety", key: "Fire_Safety", icon: "fire" },
+                { name: "Medication Safety", key: "Medication_Safety", icon: "pills" }
             ];
-            
-            document.getElementById('assessment-grid').innerHTML = list.map(m => `
+            document.getElementById('grid').innerHTML = modules.map(m => `
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all">
-                    <div class="w-14 h-14 rounded-2xl bg-${m.color}-100 flex items-center justify-center text-${m.color}-600 mb-4">
-                        <i class="fas fa-${m.icon} text-2xl"></i>
-                    </div>
+                    <i class="fas fa-${m.icon} text-teal-600 text-3xl mb-4"></i>
                     <h3 class="font-bold text-slate-800 mb-6">${m.name}</h3>
-                    <button onclick="openQuiz('${m.key}')" class="w-full bg-teal-600 text-white py-3 rounded-xl font-bold text-sm">Start Assessment</button>
+                    <button onclick="window.open('${BACKEND_URL}?test=${m.key}&name=${encodeURIComponent(user.name)}&id=${user.id}', '_blank')" class="w-full bg-teal-600 text-white py-3 rounded-xl font-bold text-sm">Start (10m)</button>
                 </div>
             `).join('');
-        }
-
-        function openQuiz(key) {
-            const url = `${BACKEND_URL}?test=${key}&name=${encodeURIComponent(userData.name)}&id=${userData.id}`;
-            window.open(url, '_blank');
         }
     </script>
 </body>
