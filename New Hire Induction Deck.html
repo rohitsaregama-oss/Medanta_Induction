@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medanta Induction | Welcome</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js for Dashboards -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <script>
@@ -27,14 +23,14 @@
                     },
                     colors: {
                         medanta: {
-                            dark: '#374151',      // Changed from black to dark gray
-                            red: '#dc2626',       // Softer red
+                            dark: '#374151',
+                            red: '#dc2626',
                             redLight: '#ef4444',
-                            gold: '#d97706',      // Amber gold
+                            gold: '#d97706',
                             goldLight: '#fbbf24',
-                            teal: '#0d9488',      // Added teal for adult learning theme
-                            blue: '#2563eb',      // Professional blue
-                            sage: '#059669',      // Sage green for completion
+                            teal: '#0d9488',
+                            blue: '#2563eb',
+                            sage: '#059669',
                         }
                     },
                     animation: {
@@ -43,18 +39,9 @@
                         'pulse-soft': 'pulseSoft 2s infinite',
                     },
                     keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        pulseSoft: {
-                            '0%, 100%': { opacity: '1' },
-                            '50%': { opacity: '0.7' },
-                        }
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        pulseSoft: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.7' } }
                     }
                 }
             }
@@ -62,168 +49,45 @@
     </script>
 
     <style>
-        body {
-            overflow-x: hidden;
-            background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 50%, #f0fdf4 100%);
-        }
-        
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 60px -15px rgba(13, 148, 136, 0.15);
-        }
-
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 1s step-start infinite;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 3px solid #dc2626;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .compact-input {
-            width: 100%;
-            padding: 10px 12px 10px 40px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-        
-        .compact-input:focus {
-            border-color: #0d9488;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
-        }
-        
-        .input-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 0.9rem;
-        }
-
-        .form-hidden {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        
-        .form-visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.5s ease-out;
-        }
-
-        /* Adult Learning Specific Styles */
-        .learning-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .learning-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -12px rgba(13, 148, 136, 0.2);
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .expert-mode-badge {
-            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-        }
-
-        .handbook-icon-large {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .handbook-icon-large:hover {
-            transform: scale(1.05) rotate(2deg);
-            box-shadow: 0 15px 40px -10px rgba(13, 148, 136, 0.5);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        .interactive-stat {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .interactive-stat:hover {
-            background: #f0fdfa;
-            border-color: #14b8a6;
-        }
-
-        .skill-bar {
-            transition: width 1s ease-out;
-        }
+        body { overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 50%, #f0fdf4 100%); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 20px 60px -15px rgba(13, 148, 136, 0.15); }
+        .typing-cursor::after { content: '|'; animation: blink 1s step-start infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #dc2626; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .compact-input { width: 100%; padding: 10px 12px 10px 40px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s ease; outline: none; }
+        .compact-input:focus { border-color: #0d9488; background: #fff; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.9rem; }
+        .form-hidden { opacity: 0; transform: translateY(15px); }
+        .form-visible { opacity: 1; transform: translateY(0); transition: all 0.5s ease-out; }
+        .learning-card { transition: all 0.3s ease; cursor: pointer; }
+        .learning-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(13, 148, 136, 0.2); }
+        .handbook-icon-large { width: 80px; height: 80px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.4); transition: all 0.3s ease; }
+        .chart-container { position: relative; height: 300px; }
+        .interactive-stat { transition: all 0.3s ease; cursor: pointer; }
+        .interactive-stat:hover { background: #f0fdfa; border-color: #14b8a6; }
+        .skill-bar { transition: width 1s ease-out; }
     </style>
 </head>
 <body class="min-h-screen font-sans antialiased text-slate-700">
 
-    <!-- AUTHENTICATION SCREEN -->
     <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        
-        <!-- Background -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute top-10 left-10 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl"></div>
             <div class="absolute bottom-10 right-10 w-64 h-64 bg-amber-100/50 rounded-full blur-3xl"></div>
             <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-rose-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         </div>
 
-        <!-- Main Card -->
         <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 md:p-8 relative z-10">
-            
-            <!-- Logo -->
             <div class="flex flex-col items-center mb-6">
                 <div class="w-32 h-16 mb-3 relative">
-                    <img src="MHPL logo 2.png" alt="Medanta Logo" class="w-full h-full object-contain">
+                    <img src="MHPL_logo.png" alt="Medanta Logo" class="w-full h-full object-contain">
                 </div>
             </div>
 
-            <!-- Welcome -->
             <div class="text-center mb-5">
                 <h2 id="greeting-text" class="text-3xl font-serif text-slate-700 typing-cursor min-h-[2.5rem] font-semibold"></h2>
                 <p id="welcome-subtitle" class="text-slate-500 text-xs mt-1 opacity-0 transition-opacity duration-700">
@@ -231,14 +95,11 @@
                 </p>
             </div>
 
-            <!-- Form -->
             <form id="login-form" class="form-hidden space-y-3">
-                
                 <div class="relative">
                     <input type="text" id="user-name" required class="compact-input" placeholder="Full Name">
                     <i class="fas fa-user input-icon"></i>
                 </div>
-
                 <div class="relative">
                     <select id="user-dept" required class="compact-input appearance-none cursor-pointer">
                         <option value="" disabled selected>Department</option>
@@ -254,7 +115,6 @@
                     <i class="fas fa-building input-icon"></i>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                 </div>
-
                 <div class="relative">
                     <select id="user-role" required class="compact-input appearance-none cursor-pointer">
                         <option value="" disabled selected>Role</option>
@@ -268,32 +128,20 @@
                     <i class="fas fa-id-badge input-icon"></i>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                 </div>
-
                 <div class="relative">
                     <input type="text" id="employee-id" class="compact-input" placeholder="Employee ID (Optional)">
                     <i class="fas fa-fingerprint input-icon"></i>
                 </div>
-
-                <button type="submit" id="start-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2 text-sm mt-4">
+                <button type="submit" id="start-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-sm mt-4">
                     <span>Begin Journey</span>
                     <i class="fas fa-arrow-right text-xs"></i>
                 </button>
             </form>
-
-            <div class="mt-4 text-center">
-                <p class="text-[10px] text-slate-400">
-                    By continuing, you agree to Medanta's <a href="#" class="underline hover:text-teal-600">Privacy Policy</a>
-                </p>
-            </div>
         </div>
     </div>
 
-    <!-- MAIN APPLICATION -->
     <div id="main-app" class="hidden min-h-screen flex">
-        
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col fixed h-full z-20 transition-transform duration-300 lg:translate-x-0 -translate-x-full shadow-lg">
-            <!-- Logo -->
+        <aside id="sidebar" class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col fixed h-full z-20 transition-transform lg:translate-x-0 -translate-x-full shadow-lg">
             <div class="p-5 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md">
@@ -306,390 +154,129 @@
                 </div>
             </div>
 
-            <!-- User -->
             <div class="p-4 bg-slate-50/50 border-b border-slate-100">
                 <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold text-sm shadow-md" id="user-avatar">
-                        JD
-                    </div>
+                    <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-sm shadow-md" id="user-avatar">JD</div>
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-slate-700 truncate text-sm" id="sidebar-user-name">John</p>
                         <p class="text-[10px] text-slate-500 truncate" id="sidebar-user-dept">Cardiology</p>
                     </div>
                 </div>
-                <span id="sidebar-role-badge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-100 text-teal-700 border border-teal-200">
-                    Consultant
-                </span>
+                <span id="sidebar-role-badge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-100 text-teal-700 border border-teal-200">Consultant</span>
             </div>
 
-            <!-- Navigation -->
             <nav class="flex-1 overflow-y-auto p-3 space-y-1">
                 <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-home w-4"></i>
-                    <span>Dashboard</span>
+                    <i class="fas fa-home w-4"></i><span>Dashboard</span>
                 </button>
-                
-                <!-- Employee Handbook with Icon -->
                 <button onclick="navigateTo('handbook')" id="nav-handbook" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-book-medical w-4 text-teal-600"></i>
-                    <span>Employee Handbook</span>
+                    <i class="fas fa-book-medical w-4 text-teal-600"></i><span>Employee Handbook</span>
                 </button>
-                
                 <button onclick="navigateTo('assessment')" id="nav-assessment" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-clipboard-check w-4"></i>
-                    <span>Assessments</span>
+                    <i class="fas fa-clipboard-check w-4"></i><span>Assessments</span>
                 </button>
-                
                 <button onclick="navigateTo('skills')" id="nav-skills" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-chart-line w-4"></i>
-                    <span>My Skills</span>
+                    <i class="fas fa-chart-line w-4"></i><span>My Skills</span>
                 </button>
-
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Resources</div>
-                <a href="https://www.medanta.org/" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-teal-600 transition text-xs">
-                    <i class="fas fa-external-link-alt w-4"></i>
-                    <span>Medanta Website</span>
-                </a>
             </nav>
-
-            <!-- Expert Mode Toggle -->
             <div class="p-3 border-t border-slate-100">
-                <div class="flex items-center justify-between p-2 bg-amber-50 rounded-lg border border-amber-200">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-star text-amber-500 text-xs"></i>
-                        <span class="text-xs font-bold text-amber-800">Expert Mode</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="expert-mode" class="sr-only peer" onchange="toggleExpertMode()">
-                        <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Logout -->
-            <div class="p-3 border-t border-slate-100">
-                <button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition text-xs">
-                    <i class="fas fa-sign-out-alt w-4"></i>
-                    <span>Sign Out</span>
+                <button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-red-600 transition text-xs">
+                    <i class="fas fa-sign-out-alt w-4"></i><span>Sign Out</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Overlay -->
-        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/10 backdrop-blur-sm z-10 hidden lg:hidden"></div>
-
-        <!-- Main Content -->
         <main class="flex-1 lg:ml-64 min-h-screen">
-            <!-- Header -->
             <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-6 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="lg:hidden p-2 hover:bg-slate-100 rounded-lg text-slate-600">
-                        <i class="fas fa-bars text-sm"></i>
-                    </button>
-                    <h1 id="page-title" class="text-lg font-bold text-slate-700">Dashboard</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center gap-2 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
-                        <div class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
-                        <span id="session-timer">00:00:00</span>
-                    </div>
-                    <button onclick="showNotifications()" class="relative p-2 text-slate-400 hover:text-teal-600 transition">
-                        <i class="fas fa-bell text-lg"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                    </button>
+                <h1 id="page-title" class="text-lg font-bold text-slate-700">Dashboard</h1>
+                <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                    <div class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                    <span id="session-timer">00:00:00</span>
                 </div>
             </header>
 
-            <!-- Content -->
             <div class="p-6 max-w-6xl mx-auto">
-                
-                <!-- DASHBOARD -->
                 <div id="module-dashboard" class="module-content space-y-6 animate-fade-in">
-                    
-                    <!-- Welcome Banner - Adult Learning Focus -->
                     <div class="bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
                         <div class="relative z-10">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="px-2 py-1 bg-white/20 rounded text-xs font-medium backdrop-blur-sm">Adult Learning Path</span>
-                                <span id="expert-badge" class="hidden px-2 py-1 bg-amber-400 text-amber-900 rounded text-xs font-bold">EXPERT MODE</span>
-                            </div>
-                            <h2 class="text-2xl font-serif mb-1">Welcome back, <span id="dashboard-name" class="text-amber-300">Doctor</span></h2>
+                            <h2 class="text-2xl font-serif mb-1">Welcome back, <span id="dashboard-name" class="text-amber-300">Staff</span></h2>
                             <p class="text-teal-100 text-sm">Continue your self-paced learning journey. <span id="dashboard-dept">Department</span></p>
                         </div>
                     </div>
 
-                    <!-- Quick Access - Large Handbook Icon -->
                     <div class="grid md:grid-cols-3 gap-4">
-                        <div onclick="navigateTo('handbook')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group cursor-pointer">
-                            <div class="handbook-icon-large mx-auto mb-4">
-                                <i class="fas fa-book-open text-3xl text-white"></i>
-                            </div>
+                        <div onclick="navigateTo('handbook')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
+                            <div class="handbook-icon-large mx-auto mb-4"><i class="fas fa-book-open text-3xl text-white"></i></div>
                             <h3 class="font-bold text-slate-700 mb-1">Employee Handbook</h3>
-                            <p class="text-xs text-slate-500 mb-3">Your complete guide to Medanta</p>
-                            <div class="flex items-center justify-center gap-2 text-teal-600 text-sm font-medium">
-                                <span>Read Now</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </div>
+                            <div class="text-teal-600 text-sm font-medium">Read Now <i class="fas fa-arrow-right ml-1"></i></div>
                         </div>
-
                         <div onclick="navigateTo('assessment')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                                <i class="fas fa-clipboard-check text-3xl text-white"></i>
-                            </div>
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-amber-500 flex items-center justify-center shadow-lg"><i class="fas fa-clipboard-check text-3xl text-white"></i></div>
                             <h3 class="font-bold text-slate-700 mb-1">Assessments</h3>
-                            <p class="text-xs text-slate-500 mb-3">Test your knowledge</p>
-                            <div class="flex items-center justify-center gap-2 text-amber-600 text-sm font-medium">
-                                <span>2 Pending</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </div>
+                            <div class="text-amber-600 text-sm font-medium">Start Tests <i class="fas fa-arrow-right ml-1"></i></div>
                         </div>
-
                         <div onclick="navigateTo('skills')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                                <i class="fas fa-chart-line text-3xl text-white"></i>
-                            </div>
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg"><i class="fas fa-chart-line text-3xl text-white"></i></div>
                             <h3 class="font-bold text-slate-700 mb-1">Skill Tracker</h3>
-                            <p class="text-xs text-slate-500 mb-3">Monitor your progress</p>
-                            <div class="flex items-center justify-center gap-2 text-blue-600 text-sm font-medium">
-                                <span>View Stats</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </div>
+                            <div class="text-blue-600 text-sm font-medium">View Stats <i class="fas fa-arrow-right ml-1"></i></div>
                         </div>
                     </div>
 
-                    <!-- Interactive Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="interactive-stat bg-white p-4 rounded-xl shadow-sm border border-slate-200" onclick="showDetail('time')">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center text-teal-600">
-                                    <i class="fas fa-clock text-sm"></i>
-                                </div>
-                                <span class="text-xs text-slate-500">Study Time</span>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-700">4.5h</div>
-                            <div class="text-xs text-teal-600 mt-1">+12% this week</div>
-                        </div>
-
-                        <div class="interactive-stat bg-white p-4 rounded-xl shadow-sm border border-slate-200" onclick="showDetail('progress')">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
-                                    <i class="fas fa-percentage text-sm"></i>
-                                </div>
-                                <span class="text-xs text-slate-500">Completion</span>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-700">68%</div>
-                            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-                                <div class="bg-amber-500 h-1.5 rounded-full skill-bar" style="width: 68%"></div>
-                            </div>
-                        </div>
-
-                        <div class="interactive-stat bg-white p-4 rounded-xl shadow-sm border border-slate-200" onclick="showDetail('score')">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                                    <i class="fas fa-trophy text-sm"></i>
-                                </div>
-                                <span class="text-xs text-slate-500">Avg Score</span>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-700">87%</div>
-                            <div class="text-xs text-blue-600 mt-1">Top 15% of peers</div>
-                        </div>
-
-                        <div class="interactive-stat bg-white p-4 rounded-xl shadow-sm border border-slate-200" onclick="showDetail('streak')">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
-                                    <i class="fas fa-fire text-sm"></i>
-                                </div>
-                                <span class="text-xs text-slate-500">Day Streak</span>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-700">5 days</div>
-                            <div class="text-xs text-rose-600 mt-1">Keep it up!</div>
-                        </div>
-                    </div>
-
-                    <!-- Interactive Charts Section -->
                     <div class="grid lg:grid-cols-2 gap-6">
-                        <!-- Learning Activity Chart -->
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-slate-700 text-sm">Learning Activity</h3>
-                                <div class="flex gap-2">
-                                    <button onclick="updateChart('week')" class="px-3 py-1 text-xs rounded-lg bg-teal-100 text-teal-700 font-medium hover:bg-teal-200 transition">Week</button>
-                                    <button onclick="updateChart('month')" class="px-3 py-1 text-xs rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Month</button>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="activityChart"></canvas>
-                            </div>
+                            <h3 class="font-bold text-slate-700 text-sm mb-4">Learning Activity</h3>
+                            <div class="chart-container"><canvas id="activityChart"></canvas></div>
                         </div>
-
-                        <!-- Competency Radar -->
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-slate-700 text-sm">Competency Matrix</h3>
-                                <button onclick="rotateCompetency()" class="text-xs text-teal-600 hover:text-teal-700">
-                                    <i class="fas fa-sync-alt mr-1"></i>Refresh
-                                </button>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="competencyChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Learning Log -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                            <h3 class="font-bold text-slate-700 text-sm">Recent Learning Activity</h3>
-                            <button class="text-xs text-teal-600 hover:text-teal-700 font-medium">View All</button>
-                        </div>
-                        <div class="divide-y divide-slate-100">
-                            <div class="p-4 hover:bg-slate-50 transition cursor-pointer flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600">
-                                    <i class="fas fa-book-reader"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-slate-700 text-sm">Completed Handbook Chapter 3</h4>
-                                    <p class="text-xs text-slate-500">Patient Safety Protocols • 2 hours ago</p>
-                                </div>
-                                <span class="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">+15 XP</span>
-                            </div>
-                            <div class="p-4 hover:bg-slate-50 transition cursor-pointer flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                                    <i class="fas fa-clipboard-check"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-slate-700 text-sm">Passed Safety Assessment</h4>
-                                    <p class="text-xs text-slate-500">Score: 92% • Yesterday</p>
-                                </div>
-                                <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">+50 XP</span>
-                            </div>
+                            <h3 class="font-bold text-slate-700 text-sm mb-4">Competency Matrix</h3>
+                            <div class="chart-container"><canvas id="competencyChart"></canvas></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- HANDBOOK -->
-                <div id="module-handbook" class="module-content hidden space-y-4 animate-fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-teal-50 to-white">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-md">
-                                    <i class="fas fa-book-open"></i>
-                                </div>
-                                <div>
-                                    <h2 class="font-bold text-slate-700 text-sm">Employee Handbook</h2>
-                                    <p class="text-xs text-slate-500">Interactive Digital Edition</p>
-                                </div>
-                            </div>
-                            <a href="https://online.flippingbook.com/view/652486186/" target="_blank" class="px-4 py-2 bg-teal-600 text-white rounded-lg text-xs font-medium hover:bg-teal-700 transition shadow-md flex items-center gap-2">
-                                <i class="fas fa-external-link-alt"></i>
-                                Full Screen
-                            </a>
-                        </div>
-                        <div class="aspect-[16/9] bg-slate-100">
-                            <iframe src="https://online.flippingbook.com/view/652486186/" class="w-full h-full border-0" allowfullscreen></iframe>
-                        </div>
-                        <div class="p-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-                            <p class="text-xs text-slate-500">
-                                <i class="fas fa-info-circle mr-1 text-teal-600"></i>
-                                Use controls to zoom, search, or navigate pages
-                            </p>
-                            <div class="flex gap-2">
-                                <button onclick="document.getElementById('handbook-frame').src=document.getElementById('handbook-frame').src" class="p-2 text-slate-400 hover:text-teal-600 transition rounded-lg hover:bg-white">
-                                    <i class="fas fa-sync-alt text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
+                <div id="module-handbook" class="module-content hidden">
+                    <div class="aspect-video bg-slate-100 rounded-2xl overflow-hidden">
+                        <iframe src="https://online.flippingbook.com/view/652486186/" class="w-full h-full border-0"></iframe>
                     </div>
                 </div>
-
-                <!-- ASSESSMENTS -->
-                <div id="module-assessment" class="module-content hidden space-y-4 animate-fade-in">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-lg font-bold text-slate-700">Competency Assessments</h2>
-                        <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium">3 of 5 Completed</span>
-                    </div>
+                
+                <div id="module-assessment" class="module-content hidden space-y-4">
+                    <h2 class="text-lg font-bold text-slate-700">Competency Assessments</h2>
                     <div class="grid md:grid-cols-2 gap-4" id="assessment-grid"></div>
                 </div>
-
-                <!-- SKILLS -->
-                <div id="module-skills" class="module-content hidden space-y-4 animate-fade-in">
-                    <h2 class="text-lg font-bold text-slate-700">My Skill Development</h2>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-600">Clinical Knowledge</span>
-                                    <span class="font-bold text-teal-600">85%</span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3">
-                                    <div class="bg-gradient-to-r from-teal-500 to-teal-600 h-3 rounded-full transition-all duration-1000" style="width: 85%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-600">Safety Protocols</span>
-                                    <span class="font-bold text-amber-600">92%</span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3">
-                                    <div class="bg-gradient-to-r from-amber-400 to-amber-600 h-3 rounded-full transition-all duration-1000" style="width: 92%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-600">Communication</span>
-                                    <span class="font-bold text-blue-600">78%</span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3">
-                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000" style="width: 78%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div id="module-skills" class="module-content hidden">
+                    <h2 class="text-lg font-bold text-slate-700">Skill Progress</h2>
+                    <div id="skills-detail" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4"></div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Toast -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
 
     <script>
-        // State
-        const AppState = {
-            user: null,
-            sessionStart: null,
-            charts: {},
-            expertMode: false
-        };
+        // CONFIG: Replace with your deployed Streamlit App URL
+        const BACKEND_URL = "https://medanta-induction.streamlit.app/";
 
-        // Typing Animation
+        const AppState = { user: null, sessionStart: null, charts: {}, expertMode: false };
+
+        // Animation
         const greetingElement = document.getElementById('greeting-text');
         const text = "Namaste,";
         let i = 0;
-
         function type() {
-            if (i < text.length) {
-                greetingElement.innerHTML += text.charAt(i);
-                i++;
-                setTimeout(type, 120);
-            } else {
-                greetingElement.classList.remove('typing-cursor');
+            if (i < text.length) { greetingElement.innerHTML += text.charAt(i); i++; setTimeout(type, 120); }
+            else { 
+                greetingElement.classList.remove('typing-cursor'); 
                 greetingElement.innerHTML += " <span class='text-teal-600'>Welcome.</span>";
-                setTimeout(() => {
-                    document.getElementById('welcome-subtitle').classList.remove('opacity-0');
-                    setTimeout(() => {
-                        document.getElementById('login-form').classList.remove('form-hidden');
-                        document.getElementById('login-form').classList.add('form-visible');
-                    }, 300);
-                }, 200);
+                setTimeout(() => { document.getElementById('welcome-subtitle').classList.remove('opacity-0'); 
+                setTimeout(() => { document.getElementById('login-form').classList.remove('form-hidden'); document.getElementById('login-form').classList.add('form-visible'); }, 300); }, 200);
             }
         }
-
         window.addEventListener('load', () => setTimeout(type, 300));
 
-        // Login
+        // Submit Logic (Step 3 Integration)
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('start-btn');
@@ -699,15 +286,30 @@
             AppState.user = {
                 name: document.getElementById('user-name').value,
                 dept: document.getElementById('user-dept').value,
-                role: document.getElementById('user-role').value
+                role: document.getElementById('user-role').value,
+                empId: document.getElementById('employee-id').value
             };
             AppState.sessionStart = new Date();
+
+            // Pushing Real Data to Google Sheets
+            fetch(`${BACKEND_URL}/log_attendance`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "Timestamp": new Date().toISOString(),
+                    "Staff_Name": AppState.user.name,
+                    "Staff_ID": AppState.user.empId,
+                    "Category": AppState.user.role,
+                    "Department": AppState.user.dept,
+                    "Status": "Portal Entry"
+                })
+            }).catch(() => console.log("Backend offline."));
 
             setTimeout(() => {
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 initDashboard();
-                showToast(`Welcome, ${AppState.user.name.split(' ')[0]}!`, 'success');
+                showToast(`Welcome to Medanta, ${AppState.user.name.split(' ')[0]}!`, 'success');
             }, 1200);
         });
 
@@ -717,7 +319,7 @@
             document.getElementById('dashboard-name').textContent = AppState.user.name.split(' ')[0];
             document.getElementById('dashboard-dept').textContent = AppState.user.dept;
             document.getElementById('sidebar-role-badge').textContent = AppState.user.role;
-            document.getElementById('user-avatar').textContent = AppState.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('user-avatar').textContent = AppState.user.name.charAt(0).toUpperCase();
 
             setInterval(() => {
                 const diff = Math.floor((new Date() - AppState.sessionStart) / 1000);
@@ -732,273 +334,55 @@
         }
 
         function initCharts() {
-            // Activity Line Chart
-            const ctx1 = document.getElementById('activityChart');
-            if (ctx1) {
-                AppState.charts.activity = new Chart(ctx1, {
-                    type: 'line',
-                    data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        datasets: [{
-                            label: 'Learning Hours',
-                            data: [1.5, 2.3, 1.8, 3.2, 2.5, 4.1, 3.5],
-                            borderColor: '#0d9488',
-                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#0d9488',
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: 'rgba(13, 148, 136, 0.9)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.parsed.y + ' hours';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: { 
-                                beginAtZero: true,
-                                grid: { color: 'rgba(0,0,0,0.05)' },
-                                ticks: { font: { size: 11 } }
-                            },
-                            x: { 
-                                grid: { display: false },
-                                ticks: { font: { size: 11 } }
-                            }
-                        },
-                        onClick: (e, elements) => {
-                            if (elements.length > 0) {
-                                const index = elements[0].index;
-                                const day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index];
-                                showToast(`You studied ${AppState.charts.activity.data.datasets[0].data[index]} hours on ${day}`, 'info');
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Competency Radar Chart
-            const ctx2 = document.getElementById('competencyChart');
-            if (ctx2) {
-                AppState.charts.competency = new Chart(ctx2, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Clinical', 'Safety', 'Communication', 'Leadership', 'Technical', 'Ethics'],
-                        datasets: [{
-                            label: 'Current',
-                            data: [85, 92, 78, 65, 88, 90],
-                            borderColor: '#0d9488',
-                            backgroundColor: 'rgba(13, 148, 136, 0.2)',
-                            pointBackgroundColor: '#0d9488',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: '#0d9488'
-                        }, {
-                            label: 'Target',
-                            data: [90, 95, 85, 80, 90, 95],
-                            borderColor: '#d97706',
-                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
-                            borderDash: [5, 5],
-                            pointRadius: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { 
-                                position: 'bottom',
-                                labels: { usePointStyle: true, padding: 20 }
-                            }
-                        },
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: { stepSize: 20, font: { size: 10 } },
-                                grid: { color: 'rgba(0,0,0,0.05)' },
-                                pointLabels: { font: { size: 11 } }
-                            }
-                        },
-                        onClick: (e, elements) => {
-                            if (elements.length > 0) {
-                                const index = elements[0].index;
-                                const skill = AppState.charts.competency.data.labels[index];
-                                const score = AppState.charts.competency.data.datasets[0].data[index];
-                                showToast(`${skill}: ${score}% - Click to improve`, 'info');
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        function updateChart(period) {
-            if (!AppState.charts.activity) return;
-            
-            const data = period === 'week' 
-                ? [1.5, 2.3, 1.8, 3.2, 2.5, 4.1, 3.5]
-                : [12, 18, 15, 22, 19, 25, 20, 28, 24, 30, 26, 32];
-            
-            const labels = period === 'week'
-                ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            
-            AppState.charts.activity.data.labels = labels;
-            AppState.charts.activity.data.datasets[0].data = data;
-            AppState.charts.activity.update();
-            
-            showToast(`Showing ${period}ly data`, 'success');
-        }
-
-        function rotateCompetency() {
-            if (!AppState.charts.competency) return;
-            
-            const newData = AppState.charts.competency.data.datasets[0].data.map(v => 
-                Math.min(100, Math.max(60, v + Math.floor(Math.random() * 10) - 5))
-            );
-            
-            AppState.charts.competency.data.datasets[0].data = newData;
-            AppState.charts.competency.update();
-            showToast('Competency data refreshed', 'success');
+            new Chart(document.getElementById('activityChart'), { type: 'line', data: { labels: ['M','T','W','T','F','S','S'], datasets: [{ data: [1,2,1.5,3,2,4,3], borderColor: '#0d9488', tension: 0.4 }] }, options: { plugins: { legend: { display: false } } } });
+            new Chart(document.getElementById('competencyChart'), { type: 'radar', data: { labels: ['Clinical', 'Safety', 'Ethics', 'Tech', 'Lead'], datasets: [{ data: [80,90,70,85,60], backgroundColor: 'rgba(13, 148, 136, 0.2)', borderColor: '#0d9488' }] } });
         }
 
         function renderAssessments() {
-            const assessments = [
-                { title: "Patient Safety Fundamentals", status: "completed", score: 92, icon: "shield-alt", color: "teal" },
-                { title: "Infection Control Standards", status: "pending", due: "2 days", icon: "virus-slash", color: "amber" },
-                { title: "Emergency Response", status: "locked", icon: "ambulance", color: "slate" },
-                { title: "Medical Ethics", status: "locked", icon: "balance-scale", color: "slate" }
+            // Mapped to your Google Sheet keys 
+            const list = [
+                { title: "BLS", sheet: "Basic_Life_Support", color: "teal", icon: "heartbeat" },
+                { title: "Fire Safety", sheet: "Fire_Safety", color: "red", icon: "fire" },
+                { title: "Second Victim", sheet: "SECOND_VICTIM", color: "amber", icon: "shield-alt" },
+                { title: "Medical Documentation", sheet: "Medical_Documentation", color: "blue", icon: "file-medical" }
             ];
             
-            document.getElementById('assessment-grid').innerHTML = assessments.map(a => `
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition group">
-                    <div class="flex justify-between items-start mb-3">
-                        <div class="w-12 h-12 rounded-xl bg-${a.color}-100 flex items-center justify-center text-${a.color}-600 text-lg group-hover:scale-110 transition-transform">
+            document.getElementById('assessment-grid').innerHTML = list.map(a => `
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-${a.color}-100 flex items-center justify-center text-${a.color}-600">
                             <i class="fas fa-${a.icon}"></i>
                         </div>
-                        ${a.score ? `<span class="text-2xl font-bold text-slate-700">${a.score}%</span>` : ''}
+                        <h3 class="font-bold text-slate-700">${a.title}</h3>
                     </div>
-                    <h3 class="font-bold text-slate-700 text-sm mb-1">${a.title}</h3>
-                    <p class="text-xs text-slate-500 mb-3">${a.status === 'completed' ? 'Completed' : a.status === 'pending' ? `Due in ${a.due}` : 'Complete previous first'}</p>
-                    
-                    ${a.status === 'pending' ? 
-                        `<button class="w-full py-2 bg-teal-600 text-white rounded-lg text-xs font-medium hover:bg-teal-700 transition">Start Assessment</button>` :
-                        a.status === 'completed' ?
-                        `<button class="w-full py-2 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium hover:bg-teal-100 transition">Review</button>` :
-                        `<button disabled class="w-full py-2 bg-slate-50 text-slate-300 rounded-lg text-xs font-medium cursor-not-allowed">Locked</button>`
-                    }
+                    <div class="flex gap-2">
+                        <button onclick="startQuiz('${a.sheet}')" class="flex-1 py-2 bg-teal-600 text-white rounded-lg text-xs font-medium hover:bg-teal-700 transition">Start (10m)</button>
+                        <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pubhtml', '_blank')" class="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs hover:bg-slate-200 transition">Review</button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function toggleExpertMode() {
-            AppState.expertMode = !AppState.expertMode;
-            const badge = document.getElementById('expert-badge');
-            
-            if (AppState.expertMode) {
-                badge.classList.remove('hidden');
-                showToast('Expert Mode enabled: Skipping basic content', 'success');
-            } else {
-                badge.classList.add('hidden');
-                showToast('Standard Mode: Showing all content', 'info');
-            }
+        function startQuiz(name) { 
+            const url = `${BACKEND_URL}?test=${name}&id=${AppState.user.empId}&name=${encodeURIComponent(AppState.user.name)}`;
+            window.open(url, '_blank'); 
         }
 
-        function showDetail(type) {
-            const messages = {
-                time: 'Total study time: 4.5 hours this week',
-                progress: 'You are 68% through your induction',
-                score: 'Your average is 87% - Great job!',
-                streak: '5 day streak! Keep learning daily'
-            };
-            showToast(messages[type], 'info');
+        function navigateTo(module) { 
+            document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden')); 
+            document.getElementById(`module-${module}`).classList.remove('hidden'); 
+            document.getElementById('page-title').textContent = module.charAt(0).toUpperCase() + module.slice(1); 
         }
 
-        function navigateTo(module) {
-            document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-teal-50', 'text-teal-700');
-                el.classList.add('text-slate-600');
-            });
-            
-            document.getElementById(`module-${module}`).classList.remove('hidden');
-            const nav = document.getElementById(`nav-${module}`);
-            if (nav) {
-                nav.classList.add('bg-teal-50', 'text-teal-700');
-                nav.classList.remove('text-slate-600');
-            }
-            
-            const titles = { 
-                dashboard: 'Dashboard', 
-                handbook: 'Employee Handbook', 
-                assessment: 'Assessments',
-                skills: 'My Skills'
-            };
-            document.getElementById('page-title').textContent = titles[module];
-            
-            if (window.innerWidth < 1024) toggleSidebar();
+        function showToast(m, t) { 
+            const toast = document.createElement('div'); 
+            toast.className = "bg-slate-800 text-white px-4 py-3 rounded-xl shadow-lg text-sm transition-all"; 
+            toast.textContent = m; 
+            document.getElementById('toast-container').appendChild(toast); 
+            setTimeout(() => toast.remove(), 3000); 
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            const colors = {
-                success: 'bg-teal-600',
-                error: 'bg-red-500',
-                info: 'bg-slate-700'
-            };
-            
-            toast.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg text-sm transform translate-y-2 opacity-0 transition-all duration-300 max-w-xs`;
-            toast.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i><span>${message}</span></div>`;
-            
-            document.getElementById('toast-container').appendChild(toast);
-            requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
-            
-            setTimeout(() => {
-                toast.classList.add('translate-y-2', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function showNotifications() {
-            showToast('No new notifications', 'info');
-        }
-
-        function logout() {
-            if (confirm('Sign out?')) location.reload();
-        }
+        function logout() { location.reload(); }
     </script>
 </body>
 </html>
