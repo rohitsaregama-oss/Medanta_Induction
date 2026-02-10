@@ -1,250 +1,223 @@
 import streamlit as st
-import pandas as pd
-import uuid
+import requests
 import random
-from datetime import datetime
-from io import BytesIO
-
-import gspread
-from google.oauth2.service_account import Credentials
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from io import BytesIO
+from datetime import datetime
 
-# ======================================================
-# STREAMLIT CONFIG
-# ======================================================
-st.set_page_config(
-    page_title="Medanta Induction Portal",
-    layout="wide"
-)
+# --------------------------------------------------
+# CONFIG
+# --------------------------------------------------
+st.set_page_config(page_title="Medanta Induction Portal", layout="wide")
 
-PASS_PERCENTAGE = 80
+API_URL = "https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec"
+
+PASS_PERCENT = 80
 TOTAL_ASSESSMENTS = 17
-SHEET_NAME = "Medanta_Induction_Assessments"
 
-# ======================================================
-# GOOGLE SHEETS AUTH
-# ======================================================
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-creds = Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=SCOPES
-)
-gc = gspread.authorize(creds)
-sh = gc.open(SHEET_NAME)
+ASSESSMENT_ORDER = [
+    "A01","A02","A03","A04","A05","A06","A07","A08","A09",
+    "A10","A11","A12","A13","A14","A15","A16","A17"
+]
 
-ws_participants = sh.worksheet("Participants_Master")
-ws_questions = sh.worksheet("Question_Bank")
-ws_assessment_master = sh.worksheet("Assessment_Master")
-ws_responses = sh.worksheet("Assessment_Responses")
-ws_downloads = sh.worksheet("Marksheet_Download_Log")
+ASSESSMENT_NAMES = {
+    "A01": "HR Admin Process",
+    "A02": "Second Victim",
+    "A03": "Medication Safety",
+    "A04": "Blood & Blood Product Safety",
+    "A05": "Basic Life Support (BLS)",
+    "A06": "Fire Safety",
+    "A07": "Infection Prevention",
+    "A08": "Quality Training",
+    "A09": "IPSG",
+    "A10": "Radiation Training",
+    "A11": "Facility Management Safety",
+    "A12": "Emergency Codes",
+    "A13": "Cybersecurity Assessment",
+    "A14": "Workplace Violence",
+    "A15": "EMR Training",
+    "A16": "HIS Training",
+    "A17": "Medical Documentation"
+}
 
-# ======================================================
-# SESSION STATE
-# ======================================================
+# --------------------------------------------------
+# HELPERS
+# --------------------------------------------------
+def call_api(payload):
+    r = requests.post(API_URL, json=payload, timeout=20)
+    return r.json()
+
+def reset_assessment_state():
+    st.session_state.current_questions = []
+    st.session_state.answers = {}
+
+# --------------------------------------------------
+# SESSION STATE INIT
+# --------------------------------------------------
 if "participant_id" not in st.session_state:
     st.session_state.participant_id = None
-if "current_assessment" not in st.session_state:
-    st.session_state.current_assessment = None
-if "participant_name" not in st.session_state:
-    st.session_state.participant_name = None
+    st.session_state.current_index = 0
+    st.session_state.completed = {}
+    st.session_state.current_questions = []
+    st.session_state.answers = {}
+    st.session_state.final_scores = {}
 
-# ======================================================
-# EMBED YOUR EXISTING UI (UNCHANGED)
-# ======================================================
-with open("ui.html", "r", encoding="utf-8") as f:
-    st.components.v1.html(f.read(), height=950)
+# --------------------------------------------------
+# UI – HEADER
+# --------------------------------------------------
+st.markdown(
+    """
+    <h1 style="color:#c00;">Medanta Hospital Lucknow</h1>
+    <p>Onboarding & Induction Assessment Portal</p>
+    """,
+    unsafe_allow_html=True
+)
 
-st.divider()
+# --------------------------------------------------
+# STEP 1: PARTICIPANT REGISTRATION
+# --------------------------------------------------
+if st.session_state.participant_id is None:
+    st.subheader("Participant Details")
 
-# ======================================================
-# PARTICIPANT REGISTRATION (BACKEND)
-# ======================================================
-st.subheader("Participant Registration")
+    with st.form("register"):
+        name = st.text_input("Full Name")
+        mobile = st.text_input("Mobile Number")
+        dob = st.date_input("Date of Birth")
+        qual = st.text_input("Qualification")
+        category = st.selectbox("Category", ["Administration", "Nursing", "Clinical", "Paramedical"])
+        sub_dept = st.text_input("Sub-Department")
 
-with st.form("register_form"):
-    full_name = st.text_input("Full Name")
-    mobile = st.text_input("Mobile Number")
-    dob = st.date_input("Date of Birth")
-    qualification = st.text_input("Qualification")
-    category = st.selectbox("Category", ["Administration", "Nursing", "Clinical", "Paramedical"])
-    sub_dept = st.text_input("Sub Department")
-    submit = st.form_submit_button("Generate Induction Kit")
+        submitted = st.form_submit_button("Generate Induction Kit")
 
-if submit:
-    participant_id = f"PID-{uuid.uuid4().hex[:8].upper()}"
+    if submitted:
+        res = call_api({
+            "action": "register_participant",
+            "full_name": name,
+            "mobile": mobile,
+            "dob": str(dob),
+            "qualification": qual,
+            "category": category,
+            "sub_department": sub_dept
+        })
 
-    ws_participants.append_row([
-        participant_id,
-        full_name,
-        mobile,
-        dob.strftime("%Y-%m-%d"),
-        qualification,
-        category,
-        sub_dept,
-        datetime.now().date().isoformat(),
-        datetime.now().time().strftime("%H:%M:%S"),
-        "Active"
-    ])
+        st.session_state.participant_id = res["participant_id"]
+        st.success("Registration successful. Please start your assessments.")
+        st.rerun()
 
-    st.session_state.participant_id = participant_id
-    st.session_state.participant_name = full_name
-    st.session_state.current_assessment = "A01"
+    st.stop()
 
-    st.success(f"Induction started successfully. Participant ID: {participant_id}")
+# --------------------------------------------------
+# STEP 2: ASSESSMENT ENGINE
+# --------------------------------------------------
+pid = st.session_state.participant_id
+current_idx = st.session_state.current_index
 
-# ======================================================
-# ASSESSMENT ENGINE
-# ======================================================
-def run_assessment(assessment_id):
-    st.subheader(f"Assessment {assessment_id}")
+if current_idx < TOTAL_ASSESSMENTS:
+    aid = ASSESSMENT_ORDER[current_idx]
+    st.subheader(f"Assessment {current_idx + 1} of {TOTAL_ASSESSMENTS}")
+    st.markdown(f"### {ASSESSMENT_NAMES[aid]}")
 
-    qdf = pd.DataFrame(ws_questions.get_all_records())
-    qdf = qdf[
-        (qdf["Assessment_ID"] == assessment_id) &
-        (qdf["Active"] == "YES")
-    ]
+    if not st.session_state.current_questions:
+        data = call_api({
+            "action": "get_questions",
+            "assessment_id": aid
+        })
+        st.session_state.current_questions = data["questions"]
+        reset_assessment_state()
 
-    user_answers = {}
-    start_time = datetime.now()
-
-    for _, row in qdf.iterrows():
-        options = [
-            ("A", str(row["Option_A"])),
-            ("B", str(row["Option_B"])),
-            ("C", str(row["Option_C"])),
-            ("D", str(row["Option_D"]))
-        ]
-        random.shuffle(options)
-
+    for q in st.session_state.current_questions:
+        st.markdown(f"**{q['question']}**")
+        opts = {o["key"]: o["val"] for o in q["options"]}
         choice = st.radio(
-            row["Question_Text"],
-            options,
-            format_func=lambda x: x[1],
-            key=row["Question_ID"]
+            "",
+            options=list(opts.keys()),
+            format_func=lambda x: f"{x}. {opts[x]}",
+            key=q["question_id"]
         )
-        user_answers[row["Question_ID"]] = (choice[0], row["Correct_Option"])
+        st.session_state.answers[q["question_id"]] = choice
 
     if st.button("Submit Assessment"):
-        correct = sum(1 for v in user_answers.values() if v[0] == v[1])
-        total = len(user_answers)
-        score = round((correct / total) * 100, 2)
-        status = "PASS" if score >= PASS_PERCENTAGE else "FAIL"
-        time_taken = int((datetime.now() - start_time).total_seconds())
+        payload = {
+            "action": "submit_assessment",
+            "participant_id": pid,
+            "assessment_id": aid,
+            "answers": [
+                {"question_id": k, "selected": v}
+                for k, v in st.session_state.answers.items()
+            ]
+        }
 
-        # Attempt number
-        existing = pd.DataFrame(ws_responses.get_all_records())
-        prev = existing[
-            (existing["Participant_ID"] == st.session_state.participant_id) &
-            (existing["Assessment_ID"] == assessment_id)
-        ]
-        attempt_no = len(prev) + 1
+        result = call_api(payload)
+        score = result["score"]
 
-        ws_responses.append_row([
-            datetime.now().isoformat(),
-            st.session_state.participant_id,
-            assessment_id,
-            qdf.iloc[0]["Assessment_Name"],
-            attempt_no,
-            total,
-            correct,
-            score,
-            status,
-            time_taken
-        ])
-
-        st.info(f"Your Score: {score}%")
-
-        if status == "PASS":
-            st.success("Assessment passed. Next assessment unlocked.")
-            next_id = f"A{int(assessment_id[1:]) + 1:02d}"
-            if int(next_id[1:]) <= TOTAL_ASSESSMENTS:
-                st.session_state.current_assessment = next_id
-            else:
-                st.session_state.current_assessment = "COMPLETED"
-        else:
+        if not result["passed"]:
             st.warning(
                 "You did great however your score is below 80%. "
                 "Concentrate hard, clarify your doubts and attempt again."
             )
+            reset_assessment_state()
+        else:
+            st.success(f"Passed with {score}%")
+            st.session_state.completed[aid] = True
+            st.session_state.final_scores[aid] = score
+            st.session_state.current_index += 1
+            reset_assessment_state()
+            st.rerun()
 
-# ======================================================
-# RUN CURRENT ASSESSMENT
-# ======================================================
-if st.session_state.current_assessment and st.session_state.current_assessment not in ["COMPLETED"]:
-    run_assessment(st.session_state.current_assessment)
+    st.stop()
 
-# ======================================================
-# FINAL MARKSHEET PDF
-# ======================================================
-def generate_marksheet(participant_id):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
+# --------------------------------------------------
+# STEP 3: FINAL MARKSHEET
+# --------------------------------------------------
+st.success("🎉 All assessments completed!")
 
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, 800, "MEDANTA HOSPITAL, LUCKNOW")
-    c.setFont("Helvetica", 11)
-    c.drawString(50, 780, "Induction Assessment – Final Marksheet")
+avg_score = round(sum(st.session_state.final_scores.values()) / TOTAL_ASSESSMENTS, 2)
 
-    c.drawString(50, 750, f"Participant ID: {participant_id}")
-    c.drawString(50, 735, f"Name: {st.session_state.participant_name}")
+st.markdown(f"### Final Score: **{avg_score}%**")
 
-    df = pd.DataFrame(ws_responses.get_all_records())
-    df = df[df["Participant_ID"] == participant_id]
+if st.button("Download Final Marksheet"):
+    res = call_api({
+        "action": "generate_marksheet",
+        "participant_id": pid
+    })
 
-    y = 700
-    c.setFont("Helvetica", 10)
-
-    for aid in sorted(df["Assessment_ID"].unique()):
-        row = df[(df["Assessment_ID"] == aid) & (df["Pass_Fail"] == "PASS")].iloc[0]
-        c.drawString(
-            50, y,
-            f"{row['Assessment_Name']}  |  Attempts: {row['Attempt_Number']}  |  Score: {row['Score_Percentage']}%"
-        )
-        y -= 18
-
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(
-        50, 60,
-        "This is an assessment preview strictly for internal purposes. "
-        "Sharing of this document outside of Medanta Hospital, Lucknow "
-        "for any other purpose is strictly prohibited."
-    )
-
-    c.save()
-    buffer.seek(0)
-    return buffer
-
-# ======================================================
-# DOWNLOAD LOGIC (MAX 3)
-# ======================================================
-if st.session_state.current_assessment == "COMPLETED":
-    st.success("All 17 assessments completed successfully.")
-
-    log_df = pd.DataFrame(ws_downloads.get_all_records())
-    row = log_df[log_df["Participant_ID"] == st.session_state.participant_id]
-
-    count = int(row["Download_Count"].values[0]) if not row.empty else 0
-
-    if count < 3:
-        if st.download_button(
-            "⬇️ Download Final Assessment Marksheet (PDF)",
-            generate_marksheet(st.session_state.participant_id),
-            file_name="Medanta_Induction_Marksheet.pdf"
-        ):
-            if row.empty:
-                ws_downloads.append_row([
-                    st.session_state.participant_id,
-                    st.session_state.participant_name,
-                    1,
-                    datetime.now().isoformat()
-                ])
-            else:
-                idx = row.index[0] + 2
-                ws_downloads.update_cell(idx, 3, count + 1)
-                ws_downloads.update_cell(idx, 4, datetime.now().isoformat())
+    if res["status"] == "blocked":
+        st.error("Download limit reached. Maximum 3 downloads allowed.")
     else:
-        st.error(
-            "Download limit reached (3/3). "
-            "Please contact HR for further assistance."
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(50, height - 50, "Medanta Hospital Lucknow")
+
+        c.setFont("Helvetica", 12)
+        c.drawString(50, height - 90, f"Participant ID: {pid}")
+        c.drawString(50, height - 110, f"Date: {datetime.now().strftime('%d-%m-%Y')}")
+
+        y = height - 150
+        for aid, score in st.session_state.final_scores.items():
+            c.drawString(50, y, f"{ASSESSMENT_NAMES[aid]} : {score}%")
+            y -= 18
+
+        c.drawString(50, y - 20, f"Overall Score: {avg_score}%")
+
+        c.setFont("Helvetica-Oblique", 9)
+        c.drawString(
+            50, 40,
+            "This is an assessment preview strictly for internal purposes. "
+            "Sharing of this document outside of Medanta Hospital, Lucknow "
+            "for any other purpose is strictly Prohibited."
+        )
+
+        c.showPage()
+        c.save()
+        buffer.seek(0)
+
+        st.download_button(
+            "Download PDF",
+            buffer,
+            file_name="Medanta_Induction_Marksheet.pdf",
+            mime="application/pdf"
         )
