@@ -1,23 +1,48 @@
 import streamlit as st
-import streamlit.components.v1 as components
-from pathlib import Path
 
+# -------------------------------------------------
+# PAGE CONFIG
+# -------------------------------------------------
 st.set_page_config(
-    page_title="Medanta Induction Portal",
-    layout="wide"
+    page_title="Medanta Assessment",
+    layout="centered"
 )
 
-# ---- SHOW LOGO SAFELY (NOT IN IFRAME) ----
-st.image("mhpl_logo.png", width=180)
+# -------------------------------------------------
+# SAFE HEADER (NO EXTERNAL DEPENDENCIES)
+# -------------------------------------------------
+st.markdown("## MEDANTA HOSPITAL LUCKNOW")
+st.markdown("---")
 
-# ---- LOAD YOUR EXISTING UI (UNCHANGED) ----
-ui_file = Path("ui.html")
+# -------------------------------------------------
+# READ QUERY PARAM (CORRECT, NON-DEPRECATED)
+# -------------------------------------------------
+params = st.query_params
+assessment_id = params.get("assessment")
 
-if not ui_file.exists():
-    st.error("ui.html not found")
-else:
-    components.html(
-        ui_file.read_text(encoding="utf-8"),
-        height=1600,
-        scrolling=True
-    )
+# -------------------------------------------------
+# DEBUG OUTPUT (TEMPORARY BUT INTENTIONAL)
+# -------------------------------------------------
+st.write("DEBUG → assessment param:", assessment_id)
+
+# -------------------------------------------------
+# VALIDATION
+# -------------------------------------------------
+if not assessment_id:
+    st.warning("No assessment selected.")
+    st.stop()
+
+# -------------------------------------------------
+# SUCCESS STATE
+# -------------------------------------------------
+st.success("App loaded successfully.")
+st.info(f"Assessment received: {assessment_id}")
+
+st.markdown(
+    """
+    This confirms:
+    - The app starts without error  
+    - The URL is correct  
+    - Query parameters are working  
+    """
+)
