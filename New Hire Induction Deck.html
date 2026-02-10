@@ -4,385 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medanta Induction | Welcome</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    colors: {
-                        medanta: {
-                            dark: '#374151',
-                            red: '#dc2626',
-                            redLight: '#ef4444',
-                            gold: '#d97706',
-                            goldLight: '#fbbf24',
-                            teal: '#0d9488',
-                            blue: '#2563eb',
-                            sage: '#059669',
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out forwards',
-                        'slide-up': 'slideUp 0.6s ease-out forwards',
-                        'pulse-soft': 'pulseSoft 2s infinite',
-                    },
-                    keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        pulseSoft: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.7' } }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body { overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 50%, #f0fdf4 100%); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 20px 60px -15px rgba(13, 148, 136, 0.15); }
-        .typing-cursor::after { content: '|'; animation: blink 1s step-start infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #dc2626; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .compact-input { width: 100%; padding: 10px 12px 10px 40px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s ease; outline: none; }
-        .compact-input:focus { border-color: #0d9488; background: #fff; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); }
-        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.9rem; }
-        .form-hidden { opacity: 0; transform: translateY(15px); }
-        .form-visible { opacity: 1; transform: translateY(0); transition: all 0.5s ease-out; }
-        .learning-card { transition: all 0.3s ease; cursor: pointer; }
-        .learning-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(13, 148, 136, 0.2); }
-        .handbook-icon-large { width: 80px; height: 80px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.4); transition: all 0.3s ease; }
-        .chart-container { position: relative; height: 300px; }
-        .interactive-stat { transition: all 0.3s ease; cursor: pointer; }
-        .interactive-stat:hover { background: #f0fdfa; border-color: #14b8a6; }
-        .skill-bar { transition: width 1s ease-out; }
+        body { background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%); }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased text-slate-700">
+<body class="min-h-screen font-sans text-slate-700">
 
     <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-10 left-10 w-72 h-72 bg-teal-100/50 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-64 h-64 bg-amber-100/50 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-rose-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        </div>
-
-        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 md:p-8 relative z-10">
-            <div class="flex flex-col items-center mb-6">
-                <div class="w-32 h-16 mb-3 relative">
-                    <img src="MHPL_logo.png" alt="Medanta Logo" class="w-full h-full object-contain">
-                </div>
-            </div>
-
-            <div class="text-center mb-5">
-                <h2 id="greeting-text" class="text-3xl font-serif text-slate-700 typing-cursor min-h-[2.5rem] font-semibold"></h2>
-                <p id="welcome-subtitle" class="text-slate-500 text-xs mt-1 opacity-0 transition-opacity duration-700">
-                    Welcome to the family. Let's begin your journey.
-                </p>
-            </div>
-
-            <form id="login-form" class="form-hidden space-y-3">
-                <div class="relative">
-                    <input type="text" id="user-name" required class="compact-input" placeholder="Full Name">
-                    <i class="fas fa-user input-icon"></i>
-                </div>
-                <div class="relative">
-                    <select id="user-dept" required class="compact-input appearance-none cursor-pointer">
-                        <option value="" disabled selected>Department</option>
-                        <option value="Cardiology">Cardiology</option>
-                        <option value="Neurology">Neurology</option>
-                        <option value="Oncology">Oncology</option>
-                        <option value="Orthopaedics">Orthopaedics</option>
-                        <option value="Nursing">Nursing</option>
-                        <option value="Emergency">Emergency</option>
-                        <option value="Admin">Administration</option>
-                        <option value="IT">IT</option>
-                    </select>
-                    <i class="fas fa-building input-icon"></i>
-                    <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                </div>
-                <div class="relative">
-                    <select id="user-role" required class="compact-input appearance-none cursor-pointer">
-                        <option value="" disabled selected>Role</option>
-                        <option value="Consultant">Consultant</option>
-                        <option value="Resident">Resident</option>
-                        <option value="Nurse">Nurse</option>
-                        <option value="Technician">Technician</option>
-                        <option value="Admin">Admin Staff</option>
-                        <option value="Management">Management</option>
-                    </select>
-                    <i class="fas fa-id-badge input-icon"></i>
-                    <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                </div>
-                <div class="relative">
-                    <input type="text" id="employee-id" class="compact-input" placeholder="Employee ID (Optional)">
-                    <i class="fas fa-fingerprint input-icon"></i>
-                </div>
-                <button type="submit" id="start-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-sm mt-4">
-                    <span>Begin Journey</span>
-                    <i class="fas fa-arrow-right text-xs"></i>
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
+            <img src="MHPL_logo.png" alt="Medanta" class="h-16 mx-auto mb-6">
+            <h2 class="text-3xl font-serif font-bold mb-2">Namaste, <span class="text-teal-600">Welcome.</span></h2>
+            <p class="text-slate-500 text-sm mb-8">Begin your professional journey with Medanta.</p>
+            
+            <form id="login-form" class="space-y-4 text-left">
+                <input type="text" id="user-name" required placeholder="Full Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-teal-500">
+                <input type="text" id="employee-id" required placeholder="Employee ID" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-teal-500">
+                <select id="user-dept" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-teal-500">
+                    <option value="" disabled selected>Select Department</option>
+                    <option value="Nursing">Nursing</option>
+                    <option value="HR">HR & Admin</option>
+                    <option value="Cardiology">Cardiology</option>
+                </select>
+                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                    Begin Journey <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </form>
         </div>
     </div>
 
     <div id="main-app" class="hidden min-h-screen flex">
-        <aside id="sidebar" class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col fixed h-full z-20 transition-transform lg:translate-x-0 -translate-x-full shadow-lg">
-            <div class="p-5 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md">
-                        <i class="fas fa-heartbeat text-xs"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-serif font-bold text-slate-700 text-sm">Medanta</h2>
-                        <p class="text-[9px] text-slate-500 uppercase tracking-wider">Learning</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-4 bg-slate-50/50 border-b border-slate-100">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-sm shadow-md" id="user-avatar">JD</div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-slate-700 truncate text-sm" id="sidebar-user-name">John</p>
-                        <p class="text-[10px] text-slate-500 truncate" id="sidebar-user-dept">Cardiology</p>
-                    </div>
-                </div>
-                <span id="sidebar-role-badge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-100 text-teal-700 border border-teal-200">Consultant</span>
-            </div>
-
-            <nav class="flex-1 overflow-y-auto p-3 space-y-1">
-                <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-home w-4"></i><span>Dashboard</span>
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full">
+            <div class="p-6 border-b border-slate-100 font-bold text-xl text-teal-700">Medanta Induction</div>
+            <nav class="p-4 space-y-2">
+                <button onclick="navigateTo('dashboard')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50 text-slate-600 font-medium">
+                    <i class="fas fa-home"></i> Dashboard
                 </button>
-                <button onclick="navigateTo('handbook')" id="nav-handbook" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-book-medical w-4 text-teal-600"></i><span>Employee Handbook</span>
-                </button>
-                <button onclick="navigateTo('assessment')" id="nav-assessment" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-clipboard-check w-4"></i><span>Assessments</span>
-                </button>
-                <button onclick="navigateTo('skills')" id="nav-skills" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition text-sm">
-                    <i class="fas fa-chart-line w-4"></i><span>My Skills</span>
+                <button onclick="navigateTo('assessment')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50 text-slate-600 font-medium">
+                    <i class="fas fa-clipboard-check"></i> Assessments
                 </button>
             </nav>
-            <div class="p-3 border-t border-slate-100">
-                <button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-red-600 transition text-xs">
-                    <i class="fas fa-sign-out-alt w-4"></i><span>Sign Out</span>
-                </button>
-            </div>
         </aside>
 
-        <main class="flex-1 lg:ml-64 min-h-screen">
-            <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-6 py-3 flex items-center justify-between">
-                <h1 id="page-title" class="text-lg font-bold text-slate-700">Dashboard</h1>
-                <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
-                    <div class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
-                    <span id="session-timer">00:00:00</span>
+        <main class="flex-1 ml-64 p-8">
+            <div id="module-dashboard" class="space-y-6">
+                <div class="bg-teal-600 p-8 rounded-3xl text-white shadow-xl">
+                    <h1 class="text-3xl font-serif">Welcome back, <span id="display-name">Staff</span></h1>
+                    <p class="opacity-80">Track your progress through the 17 induction modules.</p>
                 </div>
-            </header>
-
-            <div class="p-6 max-w-6xl mx-auto">
-                <div id="module-dashboard" class="module-content space-y-6 animate-fade-in">
-                    <div class="bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                        <div class="relative z-10">
-                            <h2 class="text-2xl font-serif mb-1">Welcome back, <span id="dashboard-name" class="text-amber-300">Staff</span></h2>
-                            <p class="text-teal-100 text-sm">Continue your self-paced learning journey. <span id="dashboard-dept">Department</span></p>
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div onclick="navigateTo('handbook')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
-                            <div class="handbook-icon-large mx-auto mb-4"><i class="fas fa-book-open text-3xl text-white"></i></div>
-                            <h3 class="font-bold text-slate-700 mb-1">Employee Handbook</h3>
-                            <div class="text-teal-600 text-sm font-medium">Read Now <i class="fas fa-arrow-right ml-1"></i></div>
-                        </div>
-                        <div onclick="navigateTo('assessment')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-amber-500 flex items-center justify-center shadow-lg"><i class="fas fa-clipboard-check text-3xl text-white"></i></div>
-                            <h3 class="font-bold text-slate-700 mb-1">Assessments</h3>
-                            <div class="text-amber-600 text-sm font-medium">Start Tests <i class="fas fa-arrow-right ml-1"></i></div>
-                        </div>
-                        <div onclick="navigateTo('skills')" class="learning-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center group">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg"><i class="fas fa-chart-line text-3xl text-white"></i></div>
-                            <h3 class="font-bold text-slate-700 mb-1">Skill Tracker</h3>
-                            <div class="text-blue-600 text-sm font-medium">View Stats <i class="fas fa-arrow-right ml-1"></i></div>
-                        </div>
-                    </div>
-
-                    <div class="grid lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="font-bold text-slate-700 text-sm mb-4">Learning Activity</h3>
-                            <div class="chart-container"><canvas id="activityChart"></canvas></div>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="font-bold text-slate-700 text-sm mb-4">Competency Matrix</h3>
-                            <div class="chart-container"><canvas id="competencyChart"></canvas></div>
-                        </div>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <h3 class="text-slate-500 text-sm uppercase font-bold tracking-wider">Completed</h3>
+                        <p class="text-4xl font-bold text-teal-600">0/17</p>
                     </div>
                 </div>
+            </div>
 
-                <div id="module-handbook" class="module-content hidden">
-                    <div class="aspect-video bg-slate-100 rounded-2xl overflow-hidden">
-                        <iframe src="https://online.flippingbook.com/view/652486186/" class="w-full h-full border-0"></iframe>
+            <div id="module-assessment" class="hidden space-y-6">
+                <h2 class="text-2xl font-bold">Mandatory Competency Assessments</h2>
+                <div id="assessment-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     </div>
-                </div>
-                
-                <div id="module-assessment" class="module-content hidden space-y-4">
-                    <h2 class="text-lg font-bold text-slate-700">Competency Assessments</h2>
-                    <div class="grid md:grid-cols-2 gap-4" id="assessment-grid"></div>
-                </div>
-                
-                <div id="module-skills" class="module-content hidden">
-                    <h2 class="text-lg font-bold text-slate-700">Skill Progress</h2>
-                    <div id="skills-detail" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4"></div>
-                </div>
             </div>
         </main>
     </div>
 
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
-
     <script>
-        // CONFIG: Replace with your deployed Streamlit App URL
-        const BACKEND_URL = "https://medanta-induction.streamlit.app/";
+        // CONFIG: Replace with your actual Streamlit URL
+        const BACKEND_URL = "https://medantainduction-md9gqsuzmc4pzcywrwbuyh.streamlit.app/";
+        
+        const AppState = { user: null };
 
-        const AppState = { user: null, sessionStart: null, charts: {}, expertMode: false };
-
-        // Animation
-        const greetingElement = document.getElementById('greeting-text');
-        const text = "Namaste,";
-        let i = 0;
-        function type() {
-            if (i < text.length) { greetingElement.innerHTML += text.charAt(i); i++; setTimeout(type, 120); }
-            else { 
-                greetingElement.classList.remove('typing-cursor'); 
-                greetingElement.innerHTML += " <span class='text-teal-600'>Welcome.</span>";
-                setTimeout(() => { document.getElementById('welcome-subtitle').classList.remove('opacity-0'); 
-                setTimeout(() => { document.getElementById('login-form').classList.remove('form-hidden'); document.getElementById('login-form').classList.add('form-visible'); }, 300); }, 200);
-            }
-        }
-        window.addEventListener('load', () => setTimeout(type, 300));
-
-        // Submit Logic (Step 3 Integration)
+        // 1. LOGIN & "BEGIN JOURNEY" LOGIC
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = document.getElementById('start-btn');
-            btn.innerHTML = '<div class="loader"></div>';
-            btn.disabled = true;
-
             AppState.user = {
                 name: document.getElementById('user-name').value,
-                dept: document.getElementById('user-dept').value,
-                role: document.getElementById('user-role').value,
-                empId: document.getElementById('employee-id').value
+                id: document.getElementById('employee-id').value,
+                dept: document.getElementById('user-dept').value
             };
-            AppState.sessionStart = new Date();
 
-            // Pushing Real Data to Google Sheets
-            fetch(`${BACKEND_URL}/log_attendance`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    "Timestamp": new Date().toISOString(),
-                    "Staff_Name": AppState.user.name,
-                    "Staff_ID": AppState.user.empId,
-                    "Category": AppState.user.role,
-                    "Department": AppState.user.dept,
-                    "Status": "Portal Entry"
-                })
-            }).catch(() => console.log("Backend offline."));
-
-            setTimeout(() => {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                initDashboard();
-                showToast(`Welcome to Medanta, ${AppState.user.name.split(' ')[0]}!`, 'success');
-            }, 1200);
+            document.getElementById('display-name').textContent = AppState.user.name.split(' ')[0];
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            renderAssessments();
         });
 
-        function initDashboard() {
-            document.getElementById('sidebar-user-name').textContent = AppState.user.name.split(' ')[0];
-            document.getElementById('sidebar-user-dept').textContent = AppState.user.dept;
-            document.getElementById('dashboard-name').textContent = AppState.user.name.split(' ')[0];
-            document.getElementById('dashboard-dept').textContent = AppState.user.dept;
-            document.getElementById('sidebar-role-badge').textContent = AppState.user.role;
-            document.getElementById('user-avatar').textContent = AppState.user.name.charAt(0).toUpperCase();
-
-            setInterval(() => {
-                const diff = Math.floor((new Date() - AppState.sessionStart) / 1000);
-                const h = Math.floor(diff / 3600).toString().padStart(2, '0');
-                const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
-                const s = (diff % 60).toString().padStart(2, '0');
-                document.getElementById('session-timer').textContent = `${h}:${m}:${s}`;
-            }, 1000);
-
-            initCharts();
-            renderAssessments();
-        }
-
-        function initCharts() {
-            new Chart(document.getElementById('activityChart'), { type: 'line', data: { labels: ['M','T','W','T','F','S','S'], datasets: [{ data: [1,2,1.5,3,2,4,3], borderColor: '#0d9488', tension: 0.4 }] }, options: { plugins: { legend: { display: false } } } });
-            new Chart(document.getElementById('competencyChart'), { type: 'radar', data: { labels: ['Clinical', 'Safety', 'Ethics', 'Tech', 'Lead'], datasets: [{ data: [80,90,70,85,60], backgroundColor: 'rgba(13, 148, 136, 0.2)', borderColor: '#0d9488' }] } });
-        }
-
+        // 2. ASSESSMENT RENDER LOGIC
         function renderAssessments() {
-            // Mapped to your Google Sheet keys 
-            const list = [
-                { title: "BLS", sheet: "Basic_Life_Support", color: "teal", icon: "heartbeat" },
-                { title: "Fire Safety", sheet: "Fire_Safety", color: "red", icon: "fire" },
-                { title: "Second Victim", sheet: "SECOND_VICTIM", color: "amber", icon: "shield-alt" },
-                { title: "Medical Documentation", sheet: "Medical_Documentation", color: "blue", icon: "file-medical" }
+            const modules = [
+                { title: "BLS", key: "Basic_Life_Support", icon: "heartbeat", color: "teal" },
+                { title: "Fire Safety", key: "Fire_Safety", icon: "fire", color: "red" },
+                { title: "IPSG", key: "IPSG", icon: "shield-virus", color: "blue" },
+                { title: "Medication Safety", key: "Medication_Safety", icon: "pills", color: "amber" }
+                // Add all 17 modules here...
             ];
-            
-            document.getElementById('assessment-grid').innerHTML = list.map(a => `
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+
+            document.getElementById('assessment-grid').innerHTML = modules.map(m => `
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-${a.color}-100 flex items-center justify-center text-${a.color}-600">
-                            <i class="fas fa-${a.icon}"></i>
+                        <div class="w-12 h-12 rounded-xl bg-${m.color}-100 flex items-center justify-center text-${m.color}-600">
+                            <i class="fas fa-${m.icon}"></i>
                         </div>
-                        <h3 class="font-bold text-slate-700">${a.title}</h3>
+                        <h3 class="font-bold text-slate-700">${m.title}</h3>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="startQuiz('${a.sheet}')" class="flex-1 py-2 bg-teal-600 text-white rounded-lg text-xs font-medium hover:bg-teal-700 transition">Start (10m)</button>
-                        <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pubhtml', '_blank')" class="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs hover:bg-slate-200 transition">Review</button>
+                        <button onclick="startTest('${m.key}')" class="flex-1 py-2 bg-teal-600 text-white rounded-lg text-xs font-bold hover:bg-teal-700">Start (10m)</button>
+                        <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pubhtml', '_blank')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs hover:bg-slate-200">Review</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function startQuiz(name) { 
-            const url = `${BACKEND_URL}?test=${name}&id=${AppState.user.empId}&name=${encodeURIComponent(AppState.user.name)}`;
-            window.open(url, '_blank'); 
+        // 3. START TEST LOGIC (Launches Streamlit with Params)
+        function startTest(key) {
+            const url = `${BACKEND_URL}?test=${key}&id=${AppState.user.id}&name=${encodeURIComponent(AppState.user.name)}`;
+            window.open(url, '_blank');
         }
 
-        function navigateTo(module) { 
-            document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden')); 
-            document.getElementById(`module-${module}`).classList.remove('hidden'); 
-            document.getElementById('page-title').textContent = module.charAt(0).toUpperCase() + module.slice(1); 
+        // NAVIGATION LOGIC
+        function navigateTo(module) {
+            document.getElementById('module-dashboard').classList.add('hidden');
+            document.getElementById('module-assessment').classList.add('hidden');
+            document.getElementById(`module-${module}`).classList.remove('hidden');
         }
-
-        function showToast(m, t) { 
-            const toast = document.createElement('div'); 
-            toast.className = "bg-slate-800 text-white px-4 py-3 rounded-xl shadow-lg text-sm transition-all"; 
-            toast.textContent = m; 
-            document.getElementById('toast-container').appendChild(toast); 
-            setTimeout(() => toast.remove(), 3000); 
-        }
-
-        function logout() { location.reload(); }
     </script>
 </body>
 </html>
