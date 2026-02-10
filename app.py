@@ -26,62 +26,47 @@ ASSESSMENT_LINKS = {
     "Medical_Documentation": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtPu9Ul7H7cScYBHluogzLNkDzsST-bBgKlN_wUI1qwpMOzazyGH6moUNZBIoL9LPjgZUIQBJ-6x0Y/pub?gid=1507714537&single=true&output=csv"
 }
 
-st.set_page_config(page_title="Medanta Induction Portal", layout="wide")
+st.set_page_config(page_title="Medanta Quiz Engine", layout="wide")
 
-# URL Parameters
+# Parameters from URL
 params = st.query_params
-test_type = params.get("test", "Basic_Life_Support")
-staff_id = params.get("id", "N/A")
+test_key = params.get("test", "Basic_Life_Support")
 staff_name = params.get("name", "Staff")
+staff_id = params.get("id", "N/A")
 
-# 3. TIMER LOGIC (10 Minutes)
+# Timer Sidebar
 if 'start_time' not in st.session_state:
     st.session_state.start_time = time.time()
-
-elapsed = time.time() - st.session_state.start_time
-remaining = max(0, 600 - int(elapsed))
-
-if remaining <= 0:
-    st.error("⏰ Time Expired! Please close this window and restart.")
-    st.stop()
-
-# Sidebar
+remaining = max(0, 600 - int(time.time() - st.session_state.start_time))
 mins, secs = divmod(remaining, 60)
-st.sidebar.markdown(f"## ⏳ Time: {mins:02d}:{secs:02d}")
-st.sidebar.write(f"**Staff:** {staff_name}\n**ID:** {staff_id}")
+st.sidebar.title(f"⏳ {mins:02d}:{secs:02d}")
+st.sidebar.write(f"**Staff:** {staff_name}")
 
-# 4. QUIZ LOGIC
-if test_type in ASSESSMENT_LINKS:
+# LOAD QUESTIONS
+if test_key in ASSESSMENT_LINKS:
     try:
-        df = pd.read_csv(ASSESSMENT_LINKS[test_type])
+        df = pd.read_csv(ASSESSMENT_LINKS[test_key])
         
-        # FIX FOR DIVISION BY ZERO: Check if sheet has questions
-        if df.empty or len(df) == 0:
-            st.warning(f"⚠️ No questions found in the '{test_type}' sheet. Please check your Google Sheet content.")
+        if df.empty or "Question" not in df.columns:
+            st.warning("⚠️ Questions are missing in your Google Sheet. Please check your columns.")
         else:
-            with st.form("quiz_form"):
-                st.title(f"📝 {test_type.replace('_', ' ')}")
-                responses = {}
+            with st.form("quiz"):
+                st.header(f"Assessment: {test_key.replace('_', ' ')}")
+                answers = {}
                 for i, row in df.iterrows():
                     st.write(f"**Q{i+1}: {row['Question']}**")
-                    options = [str(row[opt]) for opt in ['Option A', 'Option B', 'Option C', 'Option D'] if pd.notna(row[opt])]
-                    responses[i] = st.radio(f"Select answer", options, key=f"q{i}", index=None)
+                    options = [str(row[o]) for o in ['Option A', 'Option B', 'Option C', 'Option D'] if pd.notna(row[o])]
+                    answers[i] = st.radio("Select:", options, key=f"q{i}", index=None)
                 
-                submitted = st.form_submit_button("Submit Assessment")
-                
-                if submitted:
-                    if None in responses.values():
-                        st.warning("⚠️ Please answer all questions.")
+                if st.form_submit_button("Submit"):
+                    correct = sum(1 for i, r in df.iterrows() if answers[i] == str(r['Correct Answer']))
+                    score = round((correct/len(df))*100)
+                    if score >= 80:
+                        st.success(f"PASSED! {score}%")
+                        requests.post(BRIDGE_URL, json={"Staff_Name": staff_name, "Staff_ID": staff_id, "Assessment": test_key, "Score": f"{score}%", "Status": "Pass"})
+                        st.balloons()
                     else:
-                        correct = sum(1 for idx, r in df.iterrows() if responses[idx] == str(r['Correct Answer']))
-                        score = round((correct / len(df)) * 100, 2)
-                        
-                        if score >= 80:
-                            st.success(f"🎉 PASSED! Score: {score}%")
-                            payload = {"Staff_Name": staff_name, "Staff_ID": staff_id, "Assessment": test_type, "Score": f"{score}%", "Status": "Pass"}
-                            requests.post(BRIDGE_URL, json=payload)
-                            st.balloons()
-                        else:
-                            st.error(f"❌ Score: {score}%. 80% required to pass.")
+                        st.error(f"FAILED. Score: {score}%. 80% required.")
     except Exception as e:
-        st.error(f"Error loading questions: {e}")
+        st.error(f"Error: {e}")
+
