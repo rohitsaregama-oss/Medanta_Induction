@@ -1,86 +1,229 @@
-import streamlit as st
-import uuid
-import requests
-from datetime import datetime
+/***********************
+ * CONFIG
+ ***********************/
+const PASS_PERCENT = 80;
+const TOTAL_ASSESSMENTS = 17;
 
-st.set_page_config(
-    page_title="Medanta Induction Portal",
-    layout="wide"
-)
+const SHEETS = {
+  PARTICIPANTS: "Participants_Master",
+  ASSESSMENTS: "Assessment_Master",
+  QUESTIONS: "Question_Bank",
+  RESPONSES: "Assessment_Responses",
+  DOWNLOADS: "Marksheet_Download_Log"
+};
 
-# ---------------- CONFIG ----------------
-BRIDGE_URL = "https://script.google.com/macros/s/AKfycbwJwTeEhOPd1U2nxn0Mu9tc9WSZIkjyCLZ6XhiCwYPFovcTQF_gs4ys1cEbKZzRYpmP/exec"
+const ASSESSMENT_ORDER = [
+  "A01","A02","A03","A04","A05","A06","A07","A08","A09",
+  "A10","A11","A12","A13","A14","A15","A16","A17"
+];
 
-ASSESSMENTS = [
-    ("A01", "HR Admin Process"),
-    ("A02", "Second Victim"),
-    ("A03", "Medication Safety"),
-    ("A04", "Blood & Blood Product Safety"),
-    ("A05", "Basic Life Support"),
-    ("A06", "Fire Safety"),
-    ("A07", "Infection Prevention"),
-    ("A08", "Quality Training"),
-    ("A09", "IPSG"),
-    ("A10", "Radiation Safety"),
-    ("A11", "Facility Management Safety"),
-    ("A12", "Emergency Codes"),
-    ("A13", "Cybersecurity"),
-    ("A14", "Workplace Violence"),
-    ("A15", "EMR Training"),
-    ("A16", "HIS Training"),
-    ("A17", "Medical Documentation")
-]
+/***********************
+ * ENTRY POINT
+ ***********************/
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents || "{}");
+  const action = data.action;
 
-ASSESSMENT_BASE_URL = "https://medanta-assessment-tool-3wjjkaj7zzzzwjwajcvcst.streamlit.app"
+  switch (action) {
+    case "register_participant": return registerParticipant(data);
+    case "get_questions": return getQuestions(data);
+    case "submit_assessment": return submitAssessment(data);
+    case "check_eligibility": return checkEligibility(data);
+    case "generate_marksheet": return generateMarksheet(data);
+    case "admin_summary": return adminSummary();
+    case "admin_override": return adminOverride(data);
+    default:
+      return respond({ status: "error", message: "Invalid action" });
+  }
+}
 
-# ---------------- LOAD HTML UI ----------------
-with open("ui.html", "r", encoding="utf-8") as f:
-    ui_html = f.read()
+/***********************
+ * UTILITIES
+ ***********************/
+function respond(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
 
-st.components.v1.html(ui_html, height=950, scrolling=True)
+function sheet(name) {
+  return SpreadsheetApp.getActive().getSheetByName(name);
+}
 
-# ---------------- READ DATA FROM URL ----------------
-params = st.query_params
+function now() {
+  return new Date();
+}
 
-if "fullName" in params and "mobile" in params:
+/***********************
+ * 1️⃣ REGISTER PARTICIPANT
+ ***********************/
+function registerParticipant(d) {
+  sheet(SHEETS.PARTICIPANTS).appendRow([
+    d.participant_id,
+    d.full_name,
+    d.mobile,
+    d.category || "",
+    d.sub_department || "",
+    "ACTIVE",
+    now()
+  ]);
 
-    full_name = params.get("fullName")
-    mobile = params.get("mobile")
-    category = params.get("category", "")
-    sub_dept = params.get("subDept", "")
+  return respond({ status: "ok" });
+}
 
-    participant_id = f"MDT-{uuid.uuid4().hex[:8].upper()}"
+/***********************
+ * 2️⃣ ELIGIBILITY CHECK
+ ***********************/
+function checkEligibility(d) {
+  const aid = d.assessment_id;
+  const pid = d.participant_id;
 
-    # Save to Google Sheet
-    payload = {
-        "action": "register_participant",
-        "participant_id": participant_id,
-        "full_name": full_name,
-        "mobile": mobile,
-        "category": category,
-        "sub_department": sub_dept,
-        "timestamp": datetime.now().isoformat()
+  const index = ASSESSMENT_ORDER.indexOf(aid);
+  if (index === -1) {
+    return respond({ status: "error", message: "Invalid assessment" });
+  }
+
+  // First assessment always allowed
+  if (index === 0) {
+    return respond({ status: "allowed" });
+  }
+
+  const prevAid = ASSESSMENT_ORDER[index - 1];
+  const best = getBestScore(pid, prevAid);
+
+  if (best >= PASS_PERCENT) {
+    return respond({ status: "allowed" });
+  }
+
+  return respond({
+    status: "blocked",
+    message: "Previous assessment not passed"
+  });
+}
+
+/***********************
+ * 3️⃣ FETCH QUESTIONS
+ ***********************/
+function getQuestions(d) {
+  const rows = sheet(SHEETS.QUESTIONS).getDataRange().getValues();
+  rows.shift();
+
+  const questions = rows
+    .filter(r => r[0] === d.assessment_id && r[9] === "YES")
+    .map(r => ({
+      question_id: r[2],
+      question: r[3],
+      options: shuffle([
+        { key: "A", val: r[4] },
+        { key: "B", val: r[5] },
+        { key: "C", val: r[6] },
+        { key: "D", val: r[7] }
+      ]),
+      correct: r[8]
+    }));
+
+  return respond({ status: "ok", questions });
+}
+
+/***********************
+ * 4️⃣ SUBMIT ASSESSMENT
+ ***********************/
+function submitAssessment(d) {
+  const pid = d.participant_id;
+  const aid = d.assessment_id;
+  const answers = d.answers;
+
+  const qRows = sheet(SHEETS.QUESTIONS).getDataRange().getValues();
+  let correct = 0;
+
+  answers.forEach(a => {
+    const q = qRows.find(r => r[2] === a.question_id);
+    if (q && q[8] === a.selected) correct++;
+
+    sheet(SHEETS.RESPONSES).appendRow([
+      pid, aid, a.question_id, a.selected, q ? q[8] : "", now()
+    ]);
+  });
+
+  const percent = Math.round((correct / answers.length) * 100);
+
+  return respond({
+    status: "ok",
+    score: percent,
+    passed: percent >= PASS_PERCENT,
+    best_score: Math.max(percent, getBestScore(pid, aid))
+  });
+}
+
+/***********************
+ * 5️⃣ BEST SCORE LOGIC
+ ***********************/
+function getBestScore(pid, aid) {
+  const rows = sheet(SHEETS.RESPONSES).getDataRange().getValues();
+  let best = 0;
+
+  rows.forEach(r => {
+    if (r[0] === pid && r[1] === aid) {
+      const score = r[6] || 0;
+      if (score > best) best = score;
     }
+  });
 
-    try:
-        requests.post(BRIDGE_URL, json=payload, timeout=10)
-    except:
-        st.error("Failed to save participant data.")
-        st.stop()
+  return best;
+}
 
-    st.markdown("---")
-    st.success(f"Participant ID: {participant_id}")
+/***********************
+ * 6️⃣ MARKSHEET DOWNLOAD GATE
+ ***********************/
+function generateMarksheet(d) {
+  const pid = d.participant_id;
+  const rows = sheet(SHEETS.DOWNLOADS).getDataRange().getValues();
+  const count = rows.filter(r => r[0] === pid).length;
 
-    st.markdown("### Assigned Assessments")
+  if (count >= 3) {
+    return respond({ status: "blocked" });
+  }
 
-    for aid, name in ASSESSMENTS:
-        link = (
-            f"{ASSESSMENT_BASE_URL}"
-            f"?pid={participant_id}"
-            f"&aid={aid}"
-            f"&qt=60"
-            f"&tt=60"
-            f"&admin=0"
-        )
+  sheet(SHEETS.DOWNLOADS).appendRow([
+    pid, now(), "MARKSHEET_DOWNLOADED"
+  ]);
 
-        st.markdown(f"🔗 **{name}**  \n[Start Assessment]({link})")
+  return respond({ status: "ok" });
+}
+
+/***********************
+ * 7️⃣ ADMIN SUMMARY
+ ***********************/
+function adminSummary() {
+  const rows = sheet(SHEETS.PARTICIPANTS).getDataRange().getValues();
+  rows.shift();
+  return respond({ status: "ok", participants: rows });
+}
+
+/***********************
+ * 8️⃣ ADMIN OVERRIDE
+ ***********************/
+function adminOverride(d) {
+  sheet(SHEETS.RESPONSES).appendRow([
+    d.participant_id,
+    d.assessment_id,
+    "ADMIN_OVERRIDE",
+    "PASS",
+    "PASS",
+    now(),
+    100
+  ]);
+
+  return respond({ status: "ok" });
+}
+
+/***********************
+ * SHUFFLE
+ ***********************/
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
