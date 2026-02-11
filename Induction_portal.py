@@ -6,7 +6,8 @@ import requests
 # =====================================================
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl0Nv81sr0xqKfiDyuDaAey_nOrj88qPggtUnbSDqK1OZKhbr4hctXf1bmCN80ECcn/exec"
+APP_SCRIPT_URL = "PASTE_YOUR_EXEC_URL_HERE"
+
 
 # =====================================================
 # HEADER
@@ -19,6 +20,7 @@ st.markdown("""
         <p style='margin:0;font-size:14px'>Onboarding & Induction Portal</p>
     </div>
 """, unsafe_allow_html=True)
+
 
 # =====================================================
 # SESSION INIT
@@ -34,6 +36,7 @@ if "q_index" not in st.session_state:
 
 if "score" not in st.session_state:
     st.session_state.score = 0
+
 
 # =====================================================
 # FORM PAGE
@@ -86,9 +89,6 @@ if st.session_state.page == "form":
             st.warning("Please enter Full Name.")
             st.stop()
 
-        # ===============================
-        # SAFE BACKEND CALL
-        # ===============================
         try:
             resp = requests.get(
                 APP_SCRIPT_URL,
@@ -96,21 +96,14 @@ if st.session_state.page == "form":
                 timeout=15
             )
 
-            st.write("Status Code:", resp.status_code)  # debug
-
             if resp.status_code != 200:
                 st.error("Server returned error status.")
                 st.stop()
 
-            try:
-                data = resp.json()
-            except Exception:
-                st.error("Invalid JSON returned from server.")
-                st.code(resp.text)
-                st.stop()
+            data = resp.json()
 
         except Exception as e:
-            st.error("Connection error:")
+            st.error("Connection error.")
             st.write(e)
             st.stop()
 
@@ -118,12 +111,12 @@ if st.session_state.page == "form":
             st.error("No questions found for this assessment.")
             st.stop()
 
-        # Store and move forward
         st.session_state.questions = data["questions"]
         st.session_state.q_index = 0
         st.session_state.score = 0
         st.session_state.page = "assessment"
         st.rerun()
+
 
 # =====================================================
 # ASSESSMENT PAGE
@@ -134,6 +127,7 @@ elif st.session_state.page == "assessment":
     q_index = st.session_state.q_index
     total_q = len(questions)
 
+    # Completion
     if q_index >= total_q:
 
         st.success("Assessment Completed Successfully")
@@ -151,24 +145,41 @@ elif st.session_state.page == "assessment":
     q = questions[q_index]
 
     st.markdown(f"### Question {q_index + 1} of {total_q}")
-    st.markdown(q["question"])
+    st.markdown(str(q.get("question", "Question text missing")))
+
+    # -------------------------------------------------
+    # SAFE OPTION HANDLING
+    # -------------------------------------------------
+    option_a = str(q.get("option_a", "") or "")
+    option_b = str(q.get("option_b", "") or "")
+    option_c = str(q.get("option_c", "") or "")
+    option_d = str(q.get("option_d", "") or "")
+
+    options_map = {
+        "A": option_a,
+        "B": option_b,
+        "C": option_c,
+        "D": option_d,
+    }
+
+    valid_options = [k for k, v in options_map.items() if v.strip() != ""]
+
+    if not valid_options:
+        st.error("This question is not properly configured.")
+        st.stop()
 
     choice = st.radio(
         "Select your answer",
-        ["A", "B", "C", "D"],
-        format_func=lambda x: q.get(f"option_{x.lower()}", "Option Missing")
+        valid_options,
+        format_func=lambda x: options_map[x]
     )
 
     if st.button("Next", use_container_width=True):
 
-        if choice.upper() == str(q["correct"]).upper():
+        correct_answer = str(q.get("correct", "")).strip().upper()
+
+        if choice.strip().upper() == correct_answer:
             st.session_state.score += 1
 
         st.session_state.q_index += 1
         st.rerun()
-
-
-
-
-
-
