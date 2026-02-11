@@ -1,32 +1,21 @@
 import streamlit as st
 import requests
+import time
+import uuid
 
-# ================================
-# CONFIG
-# ================================
+# ================= CONFIG =================
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-# 🔴 PUT YOUR REAL EXEC URL BELOW
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl0Nv81sr0xqKfiDyuDaAey_nOrj88qPggtUnbSDqK1OZKhbr4hctXf1bmCN80ECcn/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTKLHY4be3-9n53oNnpKY--m5YdlloFI0szxEa1q96AsAlATnuufmWGa40k5xP-Gxz/exec"
 
+PASS_PERCENTAGE = 80
 
-# ================================
-# HEADER
-# ================================
-st.markdown("""
-<div style='background:linear-gradient(135deg,#c00,#800);
-            padding:25px;border-radius:15px;color:white;margin-bottom:25px'>
-<h2 style='margin:0'>MEDANTA HOSPITAL LUCKNOW</h2>
-<p style='margin:0'>Onboarding & Induction Portal</p>
-</div>
-""", unsafe_allow_html=True)
+# ================= SESSION INIT =================
+if "participant_id" not in st.session_state:
+    st.session_state.participant_id = str(uuid.uuid4())
 
-
-# ================================
-# SESSION INIT
-# ================================
-if "page" not in st.session_state:
-    st.session_state.page = "form"
+if "assessment_started" not in st.session_state:
+    st.session_state.assessment_started = False
 
 if "questions" not in st.session_state:
     st.session_state.questions = []
@@ -37,126 +26,174 @@ if "q_index" not in st.session_state:
 if "score" not in st.session_state:
     st.session_state.score = 0
 
+if "attempt_number" not in st.session_state:
+    st.session_state.attempt_number = 1
 
-# ================================
-# FORM PAGE
-# ================================
-if st.session_state.page == "form":
+if "start_time" not in st.session_state:
+    st.session_state.start_time = None
+
+
+# ================= HEADER =================
+st.markdown(
+    """
+    <div style='background:#b30000;padding:25px;border-radius:15px;color:white;text-align:center'>
+        <h2>MEDANTA HOSPITAL LUCKNOW</h2>
+        <p>Onboarding & Induction Portal</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.write("")
+
+# ================= PARTICIPANT FORM =================
+if not st.session_state.assessment_started:
 
     name = st.text_input("Full Name")
-    category = st.selectbox(
-        "Category",
-        ["Administration", "Nursing", "Doctor / Consultant", "Paramedical"]
-    )
+    department = st.text_input("Department")
+    role = st.text_input("Role / Designation")
+    qualification = st.text_input("Qualification")
+    dob = st.date_input("Date of Birth")
+    email = st.text_input("Email")
+    employee_id = st.text_input("Employee ID (Optional)")
 
-    assessment_map = {
-        "A01 – HR Admin Process": "A01",
-        "A02 – Second Victim": "A02",
-        "A03 – Medication Safety": "A03",
-        "A04 – Blood & Blood Product Safety": "A04",
-        "A05 – Basic Life Support": "A05",
-        "A06 – Fire Safety": "A06",
-        "A07 – Infection Prevention": "A07",
-        "A08 – Quality Training": "A08",
-        "A09 – IPSG": "A09",
-        "A10 – Radiation Training": "A10",
-        "A11 – Facility Management Safety": "A11",
-        "A12 – Emergency Codes": "A12",
-        "A13 – Cybersecurity": "A13",
-        "A14 – Workplace Violence": "A14",
-        "A15 – EMR Training": "A15",
-        "A16 – HIS Training": "A16",
-        "A17 – Medical Documentation": "A17"
-    }
+    assessment_list = [
+        "A01","A02","A03","A04","A05","A06","A07",
+        "A08","A09","A10","A11","A12","A13",
+        "A14","A15","A16","A17"
+    ]
 
-    selected_label = st.selectbox("Select Assessment", list(assessment_map.keys()))
-    selected_assessment = assessment_map[selected_label]
+    selected_assessment = st.selectbox("Select Assessment", assessment_list)
 
     if st.button("Start Assessment"):
 
-        if not name.strip():
-            st.warning("Please enter your name.")
+        if not name or not department or not role or not email:
+            st.error("Please complete required fields.")
             st.stop()
+
+        # Save participant
+        payload = {
+            "action": "save_participant",
+            "participant_id": st.session_state.participant_id,
+            "name": name,
+            "department": department,
+            "role": role,
+            "qualification": qualification,
+            "dob": str(dob),
+            "email": email,
+            "employee_id": employee_id
+        }
 
         try:
-            response = requests.get(
-                APP_SCRIPT_URL,
-                params={"assessment": selected_assessment},
-                timeout=15
-            )
-
-            if response.status_code != 200:
-                st.error("Server error.")
-                st.stop()
-
-            data = response.json()
-
-        except Exception as e:
-            st.error("Connection failed.")
-            st.write(e)
+            requests.post(APP_SCRIPT_URL, json=payload, timeout=10)
+        except:
+            st.error("Unable to save participant.")
             st.stop()
 
-        if not data.get("questions"):
-            st.error("No questions found.")
+        # Load Questions
+        try:
+            resp = requests.get(APP_SCRIPT_URL,
+                                params={"assessment": selected_assessment},
+                                timeout=15)
+            data = resp.json()
+        except:
+            st.error("Unable to load assessment.")
+            st.stop()
+
+        if not data or "questions" not in data or not data["questions"]:
+            st.error("No questions found for this assessment.")
             st.stop()
 
         st.session_state.questions = data["questions"]
+        st.session_state.selected_assessment = selected_assessment
         st.session_state.q_index = 0
         st.session_state.score = 0
-        st.session_state.page = "assessment"
+        st.session_state.start_time = time.time()
+        st.session_state.assessment_started = True
         st.rerun()
 
 
-# ================================
-# ASSESSMENT PAGE
-# ================================
-elif st.session_state.page == "assessment":
+# ================= ASSESSMENT SECTION =================
+else:
 
     questions = st.session_state.questions
-    index = st.session_state.q_index
-    total = len(questions)
+    q_index = st.session_state.q_index
+    total_q = len(questions)
 
-    if index >= total:
-        st.success("Assessment Completed")
-        st.info(f"Score: {st.session_state.score} / {total}")
+    if q_index >= total_q:
 
-        if st.button("Return Home"):
-            st.session_state.page = "form"
-            st.session_state.questions = []
-            st.session_state.q_index = 0
-            st.session_state.score = 0
+        time_taken = int(time.time() - st.session_state.start_time)
+        percentage = round((st.session_state.score / total_q) * 100, 2)
+        passed = percentage >= PASS_PERCENTAGE
+
+        # Save assessment attempt
+        payload = {
+            "action": "save_assessment",
+            "participant_id": st.session_state.participant_id,
+            "assessment_id": st.session_state.selected_assessment,
+            "assessment_name": st.session_state.selected_assessment,
+            "attempt_number": st.session_state.attempt_number,
+            "total_questions": total_q,
+            "correct_answers": st.session_state.score,
+            "score_percentage": percentage,
+            "pass_fail": "PASS" if passed else "FAIL",
+            "time_taken_seconds": time_taken
+        }
+
+        try:
+            requests.post(APP_SCRIPT_URL, json=payload, timeout=10)
+        except:
+            st.error("Error saving assessment.")
+            st.stop()
+
+        if not passed:
+            st.error(
+                "You did great however the qualification criteria is yet not met. "
+                "Score 80% to move on."
+            )
+
+            if st.button("Retake Assessment"):
+                st.session_state.q_index = 0
+                st.session_state.score = 0
+                st.session_state.attempt_number += 1
+                st.session_state.start_time = time.time()
+                st.rerun()
+
+            st.stop()
+
+        st.success("Assessment Passed ✅")
+        st.write(f"Score: {percentage}%")
+
+        if st.button("Finish"):
+            st.session_state.assessment_started = False
             st.rerun()
 
         st.stop()
 
-    q = questions[index]
+    # Show Question
+    q = questions[q_index]
 
-    st.markdown(f"### Question {index + 1} of {total}")
-    st.write(q.get("question", "Question missing"))
+    st.markdown(f"### Question {q_index + 1} of {total_q}")
+    st.write(q.get("question", "Question Missing"))
 
-    # Safe option handling
     options = {
-        "A": str(q.get("option_a", "") or ""),
-        "B": str(q.get("option_b", "") or ""),
-        "C": str(q.get("option_c", "") or ""),
-        "D": str(q.get("option_d", "") or "")
+        "A": q.get("option_a", "Option Missing"),
+        "B": q.get("option_b", "Option Missing"),
+        "C": q.get("option_c", "Option Missing"),
+        "D": q.get("option_d", "Option Missing")
     }
-
-    valid_options = [k for k, v in options.items() if v.strip() != ""]
-
-    if not valid_options:
-        st.error("Invalid question configuration.")
-        st.stop()
 
     choice = st.radio(
         "Select your answer",
-        valid_options,
+        list(options.keys()),
         format_func=lambda x: options[x]
     )
 
     if st.button("Next"):
 
-        if choice.upper() == str(q.get("correct", "")).upper():
+        correct_answer = str(q.get("correct", "")).strip().upper()
+
+        if choice == correct_answer:
             st.session_state.score += 1
 
         st.session_state.q_index += 1
