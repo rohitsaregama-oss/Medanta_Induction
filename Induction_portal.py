@@ -6,7 +6,7 @@ import uuid
 # ================= CONFIG =================
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTKLHY4be3-9n53oNnpKY--m5YdlloFI0szxEa1q96AsAlATnuufmWGa40k5xP-Gxz/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSqp7lfBC3Dlk4hgA4zNlvE3qOzomJi1sMhbMvl5p4t1jl5rOuDQh1SSsiIxELvsv1/exec"
 PASS_PERCENTAGE = 80
 
 
@@ -221,3 +221,4 @@ else:
 
         st.session_state.q_index += 1
         st.rerun()
+
