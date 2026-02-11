@@ -1,46 +1,21 @@
 import streamlit as st
 import requests
 import time
-import uuid
 
 # ================= CONFIG =================
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjQ78e_01wpVXn6xW7TQ58F3f1odAfFSTYmKFm-fGT4onixz7-bZEI9h9M_ceU0OL-/exec"
-PASS_PERCENTAGE = 80
-
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-# ================= SAFE JSON REQUEST =================
-def safe_get(url, params=None):
-    try:
-        r = requests.get(url, params=params, timeout=15)
-        r.raise_for_status()
-        return r.json()
-    except Exception as e:
-        st.error(f"Server error: {e}")
-        return None
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHn3NT6p3IaSjxjREH6Fly0eYhVn-vJOug0uzcclLCGJ8FSHQypzNgPkZWCbxE8maN/exec"
 
-# ================= SESSION INIT =================
-if "participant_id" not in st.session_state:
-    st.session_state.participant_id = str(uuid.uuid4())
-
-if "questions" not in st.session_state:
-    st.session_state.questions = []
-
+# ================= SESSION =================
 if "started" not in st.session_state:
     st.session_state.started = False
-
+if "questions" not in st.session_state:
+    st.session_state.questions = []
 if "q_index" not in st.session_state:
     st.session_state.q_index = 0
-
 if "score" not in st.session_state:
     st.session_state.score = 0
-
-if "attempt" not in st.session_state:
-    st.session_state.attempt = 1
-
-if "start_time" not in st.session_state:
-    st.session_state.start_time = None
-
 
 # ================= HEADER =================
 st.markdown("""
@@ -73,107 +48,83 @@ assessment_map = {
     "Medical Documentation": "A17"
 }
 
-# ================= FORM =================
+# ================= START SCREEN =================
 if not st.session_state.started:
 
-    name = st.text_input("Full Name")
-    department = st.text_input("Department")
-    role = st.text_input("Role / Designation")
-    qualification = st.text_input("Qualification")
-    dob = st.date_input("Date of Birth")
-    email = st.text_input("Email")
-    employee_id = st.text_input("Employee ID (Optional)")
-
-    selected_name = st.selectbox(
-        "Select Assessment",
-        list(assessment_map.keys())
-    )
+    selected_name = st.selectbox("Select Assessment", list(assessment_map.keys()))
 
     if st.button("Start Assessment"):
 
-        if not name or not department or not role or not email:
-            st.error("Please complete required fields.")
+        selected_id = assessment_map[selected_name]
+
+        try:
+            response = requests.get(
+                APP_SCRIPT_URL,
+                params={"assessment": selected_id},
+                timeout=15
+            )
+
+            data = response.json()
+
+        except Exception as e:
+            st.error("Unable to load assessment.")
             st.stop()
 
-        assessment_code = assessment_map[selected_name]
-
-        data = safe_get(APP_SCRIPT_URL, {"assessment": assessment_code})
-
-        if not data or "questions" not in data or not data["questions"]:
-            st.error("Unable to load assessment questions.")
+        if "questions" not in data or not data["questions"]:
+            st.error("No questions found.")
             st.stop()
 
         st.session_state.questions = data["questions"]
-        st.session_state.selected_name = selected_name
-        st.session_state.selected_code = assessment_code
+        st.session_state.started = True
         st.session_state.q_index = 0
         st.session_state.score = 0
-        st.session_state.start_time = time.time()
-        st.session_state.started = True
         st.rerun()
 
-
-# ================= ASSESSMENT =================
+# ================= QUESTION SCREEN =================
 else:
 
     questions = st.session_state.questions
-    index = st.session_state.q_index
+    q_index = st.session_state.q_index
     total = len(questions)
 
-    if index >= total:
+    if q_index >= total:
 
         percentage = round((st.session_state.score / total) * 100, 2)
-        passed = percentage >= PASS_PERCENTAGE
 
-        if not passed:
-            st.error(
-                "You did great however the qualification criteria is yet not met. "
-                "Score 80% to move on."
-            )
+        st.success("Assessment Completed ✅")
+        st.write(f"Score: {percentage}%")
 
-            if st.button("Retake Assessment"):
-                st.session_state.q_index = 0
-                st.session_state.score = 0
-                st.session_state.attempt += 1
-                st.session_state.start_time = time.time()
-                st.rerun()
-
-            st.stop()
-
-        st.success("Assessment Passed ✅")
-        st.write(f"Final Score: {percentage}%")
-
-        if st.button("Finish"):
+        if st.button("Restart"):
             st.session_state.started = False
             st.rerun()
 
         st.stop()
 
-    # ================= QUESTION =================
-    q = questions[index]
+    q = questions[q_index]
 
-    st.markdown(f"### Question {index + 1} of {total}")
-    st.write(q.get("question", ""))
+    st.markdown(f"### Question {q_index + 1} of {total}")
+    st.write(q.get("question", "Question Missing"))
 
-    options = {
-        "A": q.get("option_a", ""),
-        "B": q.get("option_b", ""),
-        "C": q.get("option_c", ""),
-        "D": q.get("option_d", "")
-    }
+    # Build safe options dictionary
+    options = {}
+    for key in ["A", "B", "C", "D"]:
+        text = q.get(f"option_{key.lower()}", "")
+        if text and str(text).strip() != "":
+            options[key] = text
 
-    # filter empty options (prevents radio crash)
-    valid_options = {k: v for k, v in options.items() if v}
+    if not options:
+        st.error("Invalid question format.")
+        st.stop()
 
     choice = st.radio(
         "Select your answer",
-        list(valid_options.keys()),
-        format_func=lambda x: valid_options[x]
+        list(options.keys()),
+        format_func=lambda x: options[x]
     )
 
     if st.button("Next"):
 
-        correct = q.get("correct", "").strip().upper()
+        correct = str(q.get("correct", "")).strip().upper()
 
         if choice == correct:
             st.session_state.score += 1
