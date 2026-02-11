@@ -1,30 +1,30 @@
 import streamlit as st
 import requests
 
-# =====================================================
+# ================================
 # CONFIG
-# =====================================================
+# ================================
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-APP_SCRIPT_URL = "PASTE_YOUR_EXEC_URL_HERE"
+# 🔴 PUT YOUR REAL EXEC URL BELOW
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl0Nv81sr0xqKfiDyuDaAey_nOrj88qPggtUnbSDqK1OZKhbr4hctXf1bmCN80ECcn/exec"
 
 
-# =====================================================
+# ================================
 # HEADER
-# =====================================================
+# ================================
 st.markdown("""
-    <div style='background:linear-gradient(135deg,#c00,#800);
-                padding:25px;border-radius:15px;color:white;
-                margin-bottom:25px'>
-        <h2 style='margin:0'>MEDANTA HOSPITAL LUCKNOW</h2>
-        <p style='margin:0;font-size:14px'>Onboarding & Induction Portal</p>
-    </div>
+<div style='background:linear-gradient(135deg,#c00,#800);
+            padding:25px;border-radius:15px;color:white;margin-bottom:25px'>
+<h2 style='margin:0'>MEDANTA HOSPITAL LUCKNOW</h2>
+<p style='margin:0'>Onboarding & Induction Portal</p>
+</div>
 """, unsafe_allow_html=True)
 
 
-# =====================================================
+# ================================
 # SESSION INIT
-# =====================================================
+# ================================
 if "page" not in st.session_state:
     st.session_state.page = "form"
 
@@ -38,77 +38,66 @@ if "score" not in st.session_state:
     st.session_state.score = 0
 
 
-# =====================================================
+# ================================
 # FORM PAGE
-# =====================================================
+# ================================
 if st.session_state.page == "form":
 
-    col1, col2 = st.columns(2)
+    name = st.text_input("Full Name")
+    category = st.selectbox(
+        "Category",
+        ["Administration", "Nursing", "Doctor / Consultant", "Paramedical"]
+    )
 
-    with col1:
-        name = st.text_input("Full Name")
-        contact = st.text_input("Contact Number")
-        qualification = st.text_input("Qualification")
+    assessment_map = {
+        "A01 – HR Admin Process": "A01",
+        "A02 – Second Victim": "A02",
+        "A03 – Medication Safety": "A03",
+        "A04 – Blood & Blood Product Safety": "A04",
+        "A05 – Basic Life Support": "A05",
+        "A06 – Fire Safety": "A06",
+        "A07 – Infection Prevention": "A07",
+        "A08 – Quality Training": "A08",
+        "A09 – IPSG": "A09",
+        "A10 – Radiation Training": "A10",
+        "A11 – Facility Management Safety": "A11",
+        "A12 – Emergency Codes": "A12",
+        "A13 – Cybersecurity": "A13",
+        "A14 – Workplace Violence": "A14",
+        "A15 – EMR Training": "A15",
+        "A16 – HIS Training": "A16",
+        "A17 – Medical Documentation": "A17"
+    }
 
-    with col2:
-        category = st.selectbox(
-            "Category",
-            ["Administration", "Nursing", "Doctor / Consultant", "Paramedical"]
-        )
+    selected_label = st.selectbox("Select Assessment", list(assessment_map.keys()))
+    selected_assessment = assessment_map[selected_label]
 
-        sub_department = st.text_input("Sub-Department")
-
-        assessment_map = {
-            "A01 – HR Admin Process": "A01",
-            "A02 – Second Victim": "A02",
-            "A03 – Medication Safety": "A03",
-            "A04 – Blood & Blood Product Safety": "A04",
-            "A05 – Basic Life Support": "A05",
-            "A06 – Fire Safety": "A06",
-            "A07 – Infection Prevention": "A07",
-            "A08 – Quality Training": "A08",
-            "A09 – IPSG": "A09",
-            "A10 – Radiation Training": "A10",
-            "A11 – Facility Management Safety": "A11",
-            "A12 – Emergency Codes": "A12",
-            "A13 – Cybersecurity": "A13",
-            "A14 – Workplace Violence": "A14",
-            "A15 – EMR Training": "A15",
-            "A16 – HIS Training": "A16",
-            "A17 – Medical Documentation": "A17"
-        }
-
-        selected_label = st.selectbox("Select Assessment", list(assessment_map.keys()))
-        selected_assessment = assessment_map[selected_label]
-
-    st.markdown("")
-
-    if st.button("Start Assessment", use_container_width=True):
+    if st.button("Start Assessment"):
 
         if not name.strip():
-            st.warning("Please enter Full Name.")
+            st.warning("Please enter your name.")
             st.stop()
 
         try:
-            resp = requests.get(
+            response = requests.get(
                 APP_SCRIPT_URL,
                 params={"assessment": selected_assessment},
                 timeout=15
             )
 
-            if resp.status_code != 200:
-                st.error("Server returned error status.")
+            if response.status_code != 200:
+                st.error("Server error.")
                 st.stop()
 
-            data = resp.json()
+            data = response.json()
 
         except Exception as e:
-            st.error("Connection error.")
+            st.error("Connection failed.")
             st.write(e)
             st.stop()
 
-        if not data or "questions" not in data or not data["questions"]:
-            st.error("No questions found for this assessment.")
+        if not data.get("questions"):
+            st.error("No questions found.")
             st.stop()
 
         st.session_state.questions = data["questions"]
@@ -118,22 +107,20 @@ if st.session_state.page == "form":
         st.rerun()
 
 
-# =====================================================
+# ================================
 # ASSESSMENT PAGE
-# =====================================================
+# ================================
 elif st.session_state.page == "assessment":
 
     questions = st.session_state.questions
-    q_index = st.session_state.q_index
-    total_q = len(questions)
+    index = st.session_state.q_index
+    total = len(questions)
 
-    # Completion
-    if q_index >= total_q:
+    if index >= total:
+        st.success("Assessment Completed")
+        st.info(f"Score: {st.session_state.score} / {total}")
 
-        st.success("Assessment Completed Successfully")
-        st.info(f"Final Score: {st.session_state.score} / {total_q}")
-
-        if st.button("Return to Home"):
+        if st.button("Return Home"):
             st.session_state.page = "form"
             st.session_state.questions = []
             st.session_state.q_index = 0
@@ -142,43 +129,34 @@ elif st.session_state.page == "assessment":
 
         st.stop()
 
-    q = questions[q_index]
+    q = questions[index]
 
-    st.markdown(f"### Question {q_index + 1} of {total_q}")
-    st.markdown(str(q.get("question", "Question text missing")))
+    st.markdown(f"### Question {index + 1} of {total}")
+    st.write(q.get("question", "Question missing"))
 
-    # -------------------------------------------------
-    # SAFE OPTION HANDLING
-    # -------------------------------------------------
-    option_a = str(q.get("option_a", "") or "")
-    option_b = str(q.get("option_b", "") or "")
-    option_c = str(q.get("option_c", "") or "")
-    option_d = str(q.get("option_d", "") or "")
-
-    options_map = {
-        "A": option_a,
-        "B": option_b,
-        "C": option_c,
-        "D": option_d,
+    # Safe option handling
+    options = {
+        "A": str(q.get("option_a", "") or ""),
+        "B": str(q.get("option_b", "") or ""),
+        "C": str(q.get("option_c", "") or ""),
+        "D": str(q.get("option_d", "") or "")
     }
 
-    valid_options = [k for k, v in options_map.items() if v.strip() != ""]
+    valid_options = [k for k, v in options.items() if v.strip() != ""]
 
     if not valid_options:
-        st.error("This question is not properly configured.")
+        st.error("Invalid question configuration.")
         st.stop()
 
     choice = st.radio(
         "Select your answer",
         valid_options,
-        format_func=lambda x: options_map[x]
+        format_func=lambda x: options[x]
     )
 
-    if st.button("Next", use_container_width=True):
+    if st.button("Next"):
 
-        correct_answer = str(q.get("correct", "")).strip().upper()
-
-        if choice.strip().upper() == correct_answer:
+        if choice.upper() == str(q.get("correct", "")).upper():
             st.session_state.score += 1
 
         st.session_state.q_index += 1
