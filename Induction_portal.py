@@ -6,7 +6,7 @@ import requests
 # =====================================================
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxl6f2x62l_1D54ZdMPT9ZML3wMDEMIxzPi9tH8aK9v1FSbiiXJNmzFB4nIDrUjO37O/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXUHxehJK2tyJ0JCUoePo726eX0oWzavBVAfZsEHxp4fmQUUW-jbrtV2S7Nvafg1ci/exec"
 
 # =====================================================
 # HEADER
@@ -166,3 +166,4 @@ elif st.session_state.page == "assessment":
 
         st.session_state.q_index += 1
         st.rerun()
+
