@@ -7,8 +7,8 @@ import uuid
 st.set_page_config(page_title="Medanta Induction Portal", layout="centered")
 
 APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTKLHY4be3-9n53oNnpKY--m5YdlloFI0szxEa1q96AsAlATnuufmWGa40k5xP-Gxz/exec"
-
 PASS_PERCENTAGE = 80
+
 
 # ================= SESSION INIT =================
 if "participant_id" not in st.session_state:
@@ -46,6 +46,7 @@ st.markdown(
 
 st.write("")
 
+
 # ================= PARTICIPANT FORM =================
 if not st.session_state.assessment_started:
 
@@ -57,13 +58,32 @@ if not st.session_state.assessment_started:
     email = st.text_input("Email")
     employee_id = st.text_input("Employee ID (Optional)")
 
-    assessment_list = [
-        "A01","A02","A03","A04","A05","A06","A07",
-        "A08","A09","A10","A11","A12","A13",
-        "A14","A15","A16","A17"
-    ]
+    assessment_map = {
+        "HR Admin Process": "A01",
+        "Second Victim": "A02",
+        "Medication Safety": "A03",
+        "Blood & Blood Product Safety": "A04",
+        "Basic Life Support": "A05",
+        "Fire Safety": "A06",
+        "Infection Prevention": "A07",
+        "Quality Training": "A08",
+        "IPSG": "A09",
+        "Radiation Training": "A10",
+        "Facility Management Safety": "A11",
+        "Emergency Codes": "A12",
+        "Cybersecurity": "A13",
+        "Workplace Violence": "A14",
+        "EMR Training": "A15",
+        "HIS Training": "A16",
+        "Medical Documentation": "A17"
+    }
 
-    selected_assessment = st.selectbox("Select Assessment", assessment_list)
+    selected_name = st.selectbox(
+        "Select Assessment",
+        list(assessment_map.keys())
+    )
+
+    selected_assessment = assessment_map[selected_name]
 
     if st.button("Start Assessment"):
 
@@ -72,7 +92,7 @@ if not st.session_state.assessment_started:
             st.stop()
 
         # Save participant
-        payload = {
+        participant_payload = {
             "action": "save_participant",
             "participant_id": st.session_state.participant_id,
             "name": name,
@@ -85,17 +105,19 @@ if not st.session_state.assessment_started:
         }
 
         try:
-            requests.post(APP_SCRIPT_URL, json=payload, timeout=10)
+            requests.post(APP_SCRIPT_URL, json=participant_payload, timeout=10)
         except:
             st.error("Unable to save participant.")
             st.stop()
 
         # Load Questions
         try:
-            resp = requests.get(APP_SCRIPT_URL,
-                                params={"assessment": selected_assessment},
-                                timeout=15)
-            data = resp.json()
+            response = requests.get(
+                APP_SCRIPT_URL,
+                params={"assessment": selected_assessment},
+                timeout=15
+            )
+            data = response.json()
         except:
             st.error("Unable to load assessment.")
             st.stop()
@@ -106,6 +128,7 @@ if not st.session_state.assessment_started:
 
         st.session_state.questions = data["questions"]
         st.session_state.selected_assessment = selected_assessment
+        st.session_state.selected_assessment_name = selected_name
         st.session_state.q_index = 0
         st.session_state.score = 0
         st.session_state.start_time = time.time()
@@ -120,18 +143,18 @@ else:
     q_index = st.session_state.q_index
     total_q = len(questions)
 
+    # -------- Completion --------
     if q_index >= total_q:
 
         time_taken = int(time.time() - st.session_state.start_time)
         percentage = round((st.session_state.score / total_q) * 100, 2)
         passed = percentage >= PASS_PERCENTAGE
 
-        # Save assessment attempt
-        payload = {
+        assessment_payload = {
             "action": "save_assessment",
             "participant_id": st.session_state.participant_id,
             "assessment_id": st.session_state.selected_assessment,
-            "assessment_name": st.session_state.selected_assessment,
+            "assessment_name": st.session_state.selected_assessment_name,
             "attempt_number": st.session_state.attempt_number,
             "total_questions": total_q,
             "correct_answers": st.session_state.score,
@@ -141,7 +164,7 @@ else:
         }
 
         try:
-            requests.post(APP_SCRIPT_URL, json=payload, timeout=10)
+            requests.post(APP_SCRIPT_URL, json=assessment_payload, timeout=10)
         except:
             st.error("Error saving assessment.")
             st.stop()
@@ -162,7 +185,7 @@ else:
             st.stop()
 
         st.success("Assessment Passed ✅")
-        st.write(f"Score: {percentage}%")
+        st.write(f"Final Score: {percentage}%")
 
         if st.button("Finish"):
             st.session_state.assessment_started = False
@@ -170,17 +193,17 @@ else:
 
         st.stop()
 
-    # Show Question
+    # -------- Question Display --------
     q = questions[q_index]
 
     st.markdown(f"### Question {q_index + 1} of {total_q}")
     st.write(q.get("question", "Question Missing"))
 
     options = {
-        "A": q.get("option_a", "Option Missing"),
-        "B": q.get("option_b", "Option Missing"),
-        "C": q.get("option_c", "Option Missing"),
-        "D": q.get("option_d", "Option Missing")
+        "A": q.get("option_a", ""),
+        "B": q.get("option_b", ""),
+        "C": q.get("option_c", ""),
+        "D": q.get("option_d", "")
     }
 
     choice = st.radio(
